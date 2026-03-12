@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sunil Kumar — Global Trade Compliance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --cream:#F8F6F2;--white:#fff;
+      --ink:#191817;--ink-mid:#48443E;--ink-light:#908880;
+      --gold:#B08D57;--gold-lt:#E6D8BC;--gold-pale:#F3EDE0;
+      --rule:#E4DDD3;
+      --serif:'Playfair Display',Georgia,serif;
+      --sans:'DM Sans',system-ui,sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--cream);color:var(--ink);overflow-x:hidden;cursor:none}
+
+    /* ── CURSOR ── */
+    #cur,#cring{position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);border-radius:50%}
+    #cur{width:7px;height:7px;background:var(--gold);transition:width .2s,height .2s}
+    #cring{width:28px;height:28px;border:1.5px solid var(--gold);z-index:9998;transition:width .3s,height .3s}
+
+    /* ── NAV ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.35rem 5vw;background:rgba(248,246,242,.93);backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:border-color .4s}
+    nav.scrolled{border-color:var(--rule)}
+    .nav-logo{font-family:var(--serif);font-size:1.15rem;font-weight:600;color:var(--ink);text-decoration:none}
+    .nav-logo em{color:var(--gold);font-style:normal}
+    .nav-links{display:flex;gap:2.25rem;list-style:none}
+    .nav-links a{font-size:.73rem;font-weight:500;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-mid);text-decoration:none;position:relative;transition:color .25s}
+    .nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:100%;height:1px;background:var(--gold);transition:right .3s}
+    .nav-links a:hover{color:var(--ink)}.nav-links a:hover::after{right:0}
+    .nav-cta{font-size:.73rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;padding:.52rem 1.35rem;background:var(--ink);color:var(--white);text-decoration:none;transition:background .25s}
+    .nav-cta:hover{background:var(--gold)}
+
+    /* ── HERO ── */
+    #hero{min-height:100vh;display:grid;grid-template-columns:54% 46%;align-items:center;padding:8rem 5vw 5rem;gap:3rem}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:.7rem;font-size:.69rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--gold);margin-bottom:1.5rem}
+    .hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--gold)}
+    h1{font-family:var(--serif);font-size:clamp(3rem,5.5vw,5rem);font-weight:700;line-height:1.05;letter-spacing:-.025em;color:var(--ink)}
+    h1 em{font-style:italic;font-weight:400;color:var(--gold);display:block}
+    .hero-role{font-family:var(--serif);font-size:clamp(.95rem,1.6vw,1.15rem);font-style:italic;color:var(--ink-mid);margin:.4rem 0 .7rem}
+    .hero-cert{display:inline-flex;align-items:center;gap:.45rem;background:var(--gold-pale);border:1px solid var(--gold-lt);padding:.36rem .95rem;font-size:.69rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1.75rem}
+    .hero-desc{font-size:.97rem;color:var(--ink-mid);line-height:1.85;max-width:490px;margin-bottom:2.1rem}
+    .hero-actions{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:2.25rem}
+    .btn-p{display:inline-block;padding:.8rem 2rem;background:var(--ink);color:var(--white);text-decoration:none;font-size:.76rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;transition:background .3s,transform .2s}
+    .btn-p:hover{background:var(--gold);transform:translateY(-2px)}
+    .btn-g{display:inline-block;padding:.8rem 2rem;border:1px solid var(--rule);color:var(--ink-mid);text-decoration:none;font-size:.76rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;transition:border-color .3s,color .3s,transform .2s}
+    .btn-g:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+    .lang-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+    .lang-lbl{font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-light);margin-right:.15rem}
+    .lang-pill{font-size:.69rem;padding:.2rem .65rem;background:var(--white);border:1px solid var(--rule);color:var(--ink-mid)}
+
+    /* Hero right */
+    .hero-right{display:flex;flex-direction:column;gap:1rem}
+    .stat-card{background:var(--white);border:1px solid var(--rule);padding:1.65rem 1.85rem;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.35rem}
+    .s-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-light);margin-bottom:.28rem}
+    .s-val{font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--ink);line-height:1}
+    .s-val sup{font-size:.82rem;color:var(--gold);font-family:var(--sans)}
+    .ticker-wrap{background:var(--white);border:1px solid var(--rule);padding:.9rem 1.2rem;display:flex;align-items:center;gap:.9rem;overflow:hidden}
+    .ticker-lbl{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);white-space:nowrap}
+    .ticker-track{overflow:hidden;flex:1}
+    .ticker-inner{display:flex;gap:2.5rem;animation:tick 22s linear infinite;white-space:nowrap}
+    .ticker-inner span{font-size:.73rem;color:var(--ink-mid)}
+    @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .badge-row{display:flex;gap:.8rem}
+    .b-pill{flex:1;display:flex;align-items:center;gap:.6rem;padding:.8rem .95rem;background:var(--white);border:1px solid var(--rule);font-size:.74rem;color:var(--ink-mid);transition:border-color .3s}
+    .b-pill:hover{border-color:var(--gold)}
+    .b-ico{font-size:1.1rem}
+
+    /* ── COMMON SECTION ── */
+    section{padding:6.5rem 5vw}
+    .s-hdr{margin-bottom:3.5rem}
+    .eyebrow{display:inline-flex;align-items:center;gap:.6rem;font-size:.67rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--gold);margin-bottom:.75rem}
+    .eyebrow::before{content:'';display:block;width:18px;height:1px;background:var(--gold)}
+    h2{font-family:var(--serif);font-size:clamp(1.9rem,3.2vw,2.75rem);font-weight:600;line-height:1.15;color:var(--ink)}
+    h2 em{font-style:italic;font-weight:400;color:var(--gold)}
+    .s-rule{width:40px;height:2px;background:var(--gold);margin-top:.9rem}
+
+    /* ── ABOUT ── */
+    #about{background:var(--white)}
+    .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:5rem;align-items:start}
+    .about-body p{font-size:.96rem;color:var(--ink-mid);line-height:1.9;margin-bottom:1.3rem}
+    .about-body p strong{color:var(--ink);font-weight:500}
+    .about-links{display:flex;flex-direction:column;gap:.5rem;margin-top:1.75rem}
+    .about-links a{font-size:.82rem;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:.4rem;transition:opacity .2s}
+    .about-links a:hover{opacity:.7;text-decoration:underline}
+    .ind-bar{padding:1.3rem 1.5rem;background:var(--gold-pale);border:1px solid var(--gold-lt);margin-bottom:1.25rem}
+    .ind-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.6rem}
+    .ind-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+    .i-tag{font-size:.71rem;padding:.26rem .7rem;background:var(--white);border:1px solid var(--gold-lt);color:var(--ink-mid)}
+    .edu-block{background:var(--cream);border:1px solid var(--rule);padding:1.3rem 1.5rem}
+    .edu-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.8rem}
+    .edu-item{margin-bottom:.9rem}
+    .edu-item:last-child{margin-bottom:0}
+    .edu-deg{font-size:.85rem;font-weight:500;color:var(--ink)}
+    .edu-school{font-size:.78rem;color:var(--ink-mid)}
+    .edu-year{font-size:.7rem;color:var(--ink-light);margin-top:.1rem}
+
+    /* ── SKILLS ── */
+    #skills{background:var(--cream)}
+    .sk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .sk-card{background:var(--white);border:1px solid var(--rule);padding:1.5rem;position:relative;overflow:hidden;transition:box-shadow .3s,transform .3s}
+    .sk-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.06);transform:translateY(-4px)}
+    .sk-card::after{content:'';position:absolute;bottom:0;left:0;right:100%;height:2px;background:var(--gold);transition:right .42s}
+    .sk-card:hover::after{right:0}
+    .sk-ico{font-size:1.5rem;margin-bottom:.7rem}
+    .sk-title{font-family:var(--serif);font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:.18rem}
+    .sk-sub{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.9rem}
+    .sk-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+    .sk-tag{font-size:.68rem;padding:.22rem .6rem;border:1px solid var(--rule);color:var(--ink-mid);background:var(--cream);transition:background .2s,border-color .2s}
+    .sk-tag:hover{background:var(--gold-pale);border-color:var(--gold-lt)}
+    /* Cert strip */
+    .cert-strip{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:3rem;padding-top:2.5rem;border-top:1px solid var(--rule)}
+    .cert-card{flex:1;min-width:185px;background:var(--white);border:1px solid var(--rule);padding:1.1rem 1.3rem;display:flex;align-items:flex-start;gap:.75rem}
+    .cert-badge{width:32px;height:32px;background:var(--gold-pale);border:1px solid var(--gold-lt);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+    .cert-name{font-size:.78rem;font-weight:500;color:var(--ink);margin-bottom:.15rem}
+    .cert-issuer{font-size:.68rem;color:var(--ink-light)}
+    .cert-yr{font-size:.64rem;color:var(--gold);font-weight:500;margin-top:.15rem}
+
+    /* ── EXPERIENCE ── */
+    #experience{background:var(--white)}
+    .exp-layout{display:grid;grid-template-columns:240px 1fr;gap:4rem;align-items:start}
+    .exp-side{position:sticky;top:7rem}
+    .exp-side-title{font-family:var(--serif);font-size:1.25rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:1.25rem}
+    .exp-side-title em{font-style:italic;color:var(--gold)}
+    .exp-box{padding:1rem 1.2rem;background:var(--cream);border:1px solid var(--rule);margin-bottom:.7rem}
+    .exp-box-lbl{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-light);margin-bottom:.25rem}
+    .exp-box-val{font-family:var(--serif);font-size:1.75rem;font-weight:700;color:var(--gold);line-height:1}
+    .exp-box-txt{font-size:.82rem;font-weight:500;color:var(--ink);line-height:1.4;margin-top:.18rem}
+    .exp-box-sub{font-size:.72rem;color:var(--ink-light)}
+    .award-list{margin-top:1.25rem;display:flex;flex-direction:column;gap:.42rem}
+    .aw{font-size:.74rem;color:var(--ink-mid);display:flex;align-items:flex-start;gap:.4rem;line-height:1.45}
+    .aw::before{content:'🏅';flex-shrink:0}
+    .timeline{position:relative;padding-left:1.65rem}
+    .timeline::before{content:'';position:absolute;left:0;top:10px;bottom:0;width:1px;background:var(--rule)}
+    .tl{position:relative;padding-bottom:3rem;opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+    .tl.visible{opacity:1;transform:none}
+    .tl-dot{position:absolute;left:-1.65rem;top:10px;width:9px;height:9px;border-radius:50%;background:var(--white);border:2px solid var(--gold);transform:translateX(-4px)}
+    .tl-date{font-size:.67rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:500;margin-bottom:.42rem}
+    .tl-role{font-family:var(--serif);font-size:1.15rem;font-weight:600;color:var(--ink);margin-bottom:.15rem}
+    .tl-co{font-size:.84rem;color:var(--ink-mid);margin-bottom:.9rem}
+    .tl-co span{color:var(--ink-light);font-size:.76rem}
+    .tl-list{list-style:none;display:flex;flex-direction:column;gap:.52rem}
+    .tl-list li{font-size:.855rem;color:var(--ink-mid);line-height:1.72;padding-left:1.1rem;position:relative}
+    .tl-list li::before{content:'—';position:absolute;left:0;color:var(--gold);font-size:.7rem;top:.22rem}
+    .chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.85rem}
+    .chip{font-size:.64rem;padding:.2rem .58rem;background:var(--gold-pale);color:var(--ink-mid);text-transform:uppercase;letter-spacing:.07em;border:1px solid var(--gold-lt)}
+
+    /* ── PROJECTS ── */
+    #projects{background:var(--cream)}
+    .proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.35rem}
+    .proj-card{background:var(--white);border:1px solid var(--rule);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .3s,transform .3s;opacity:0;transform:translateY(14px)}
+    .proj-card.visible{opacity:1;transform:none}
+    .proj-card:hover{box-shadow:0 10px 36px rgba(0,0,0,.07);transform:translateY(-4px)}
+    .proj-head{padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem}
+    .proj-num{font-family:var(--serif);font-size:2.6rem;font-weight:700;color:var(--rule);line-height:1}
+    .proj-co{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);background:var(--gold-pale);padding:.25rem .6rem;border:1px solid var(--gold-lt)}
+    .proj-body{padding:0 1.5rem 1.5rem;flex:1;display:flex;flex-direction:column}
+    .proj-title{font-family:var(--serif);font-size:1.05rem;font-weight:600;color:var(--ink);margin-bottom:.45rem}
+    .proj-desc{font-size:.84rem;color:var(--ink-mid);line-height:1.73;flex:1;margin-bottom:.9rem}
+    .proj-impact{padding:.65rem .85rem;background:var(--cream);border-left:3px solid var(--gold);font-size:.78rem;color:var(--ink-mid);margin-bottom:.9rem}
+    .proj-impact strong{color:var(--ink)}
+    .proj-tags{display:flex;flex-wrap:wrap;gap:.32rem}
+    .proj-tag{font-size:.64rem;padding:.18rem .52rem;border:1px solid var(--rule);color:var(--ink-light)}
+
+    /* ── BLOG / NEWS ── */
+    #blog{background:var(--white)}
+    .blog-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+    .blog-filters{display:flex;gap:.6rem;flex-wrap:wrap}
+    .filter-btn{font-size:.69rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;padding:.42rem 1rem;border:1px solid var(--rule);background:transparent;color:var(--ink-mid);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+    .filter-btn.active,.filter-btn:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+    .refresh-btn{display:inline-flex;align-items:center;gap:.5rem;font-size:.71rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;padding:.5rem 1.3rem;background:var(--gold);color:var(--ink);border:none;cursor:pointer;transition:background .25s,transform .2s}
+    .refresh-btn:hover{background:var(--gold-lt);transform:translateY(-2px)}
+    .refresh-btn .spin{display:inline-block;transition:transform .3s}
+    .refresh-btn.loading .spin{animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* News grid */
+    .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.35rem}
+    .news-card{background:var(--cream);border:1px solid var(--rule);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .3s,transform .3s;opacity:0;transform:translateY(12px);animation:cardIn .5s ease forwards}
+    @keyframes cardIn{to{opacity:1;transform:none}}
+    .news-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.07);transform:translateY(-3px)}
+    .news-cat{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem .5rem}
+    .news-cat-badge{font-size:.63rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);background:var(--gold-pale);padding:.22rem .6rem;border:1px solid var(--gold-lt)}
+    .news-date{font-size:.63rem;color:var(--ink-light)}
+    .news-body{padding:.25rem 1.25rem 1.25rem;flex:1;display:flex;flex-direction:column}
+    .news-title{font-family:var(--serif);font-size:.98rem;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:.6rem}
+    .news-summary{font-size:.8rem;color:var(--ink-mid);line-height:1.7;flex:1;margin-bottom:.9rem}
+    .news-tags{display:flex;flex-wrap:wrap;gap:.32rem;margin-bottom:.9rem}
+    .news-tag{font-size:.62rem;padding:.16rem .5rem;border:1px solid var(--rule);color:var(--ink-light)}
+    .news-source{font-size:.68rem;color:var(--ink-light);display:flex;align-items:center;gap:.35rem;margin-top:auto}
+    .news-source::before{content:'';display:block;width:16px;height:1px;background:var(--rule)}
+
+    /* Skeleton loaders */
+    .skeleton{background:linear-gradient(90deg,#ece9e3 25%,#f5f2ed 50%,#ece9e3 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .skel-card{background:var(--cream);border:1px solid var(--rule);padding:1.25rem;height:260px;border-radius:0}
+    .skel-line{height:12px;border-radius:2px;margin-bottom:.75rem}
+    .skel-line.w80{width:80%}.skel-line.w60{width:60%}.skel-line.w90{width:90%}.skel-line.w40{width:40%}
+    .skel-block{height:65px;margin-bottom:.75rem;border-radius:2px}
+
+    /* Error state */
+    .news-error{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-mid)}
+    .news-error .err-icon{font-size:2.5rem;margin-bottom:1rem}
+    .news-error p{font-size:.9rem;line-height:1.6;max-width:440px;margin:0 auto .75rem}
+    .news-error button{font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;padding:.6rem 1.5rem;background:var(--ink);color:var(--white);border:none;cursor:pointer}
+
+    /* ── CONTACT ── */
+    #contact{background:var(--ink);color:var(--white)}
+    #contact .eyebrow{color:var(--gold-lt)}
+    #contact .eyebrow::before{background:var(--gold-lt)}
+    #contact h2{color:var(--white)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+    .c-intro{font-size:.96rem;color:rgba(255,255,255,.52);line-height:1.9;margin-bottom:2.1rem}
+    .c-links{display:flex;flex-direction:column;gap:.75rem}
+    .c-link{display:flex;align-items:center;gap:1rem;text-decoration:none;color:rgba(255,255,255,.62);font-size:.84rem;padding:.95rem 1.3rem;border:1px solid rgba(255,255,255,.09);transition:background .3s,border-color .3s,color .3s}
+    .c-link:hover{background:rgba(255,255,255,.04);border-color:var(--gold);color:var(--white)}
+    .c-ico{width:32px;height:32px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+    .c-form{display:flex;flex-direction:column;gap:.95rem}
+    .f-grp{display:flex;flex-direction:column;gap:.38rem}
+    .f-lbl{font-size:.64rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.36)}
+    .f-in,.f-ta{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--white);padding:.8rem .95rem;font-family:var(--sans);font-size:.84rem;outline:none;transition:border-color .3s;resize:none}
+    .f-in::placeholder,.f-ta::placeholder{color:rgba(255,255,255,.2)}
+    .f-in:focus,.f-ta:focus{border-color:var(--gold)}
+    .f-ta{height:100px}
+    .btn-send{align-self:flex-start;padding:.8rem 2.2rem;background:var(--gold);color:var(--ink);border:none;cursor:pointer;font-family:var(--sans);font-size:.76rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;transition:background .3s,transform .2s}
+    .btn-send:hover{background:var(--gold-lt);transform:translateY(-2px)}
+
+    /* ── FOOTER ── */
+    footer{background:#0F0F0E;padding:1.6rem 5vw;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.06)}
+    .f-copy{font-size:.71rem;color:rgba(255,255,255,.26)}
+    .f-brand{font-family:var(--serif);font-size:.88rem;color:rgba(255,255,255,.16);font-style:italic}
+
+    /* ── ANIMATION UTILS ── */
+    .fade-in{opacity:0;transform:translateY(15px);transition:opacity .7s ease,transform .7s ease}
+    .fade-in.visible{opacity:1;transform:none}
+    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}.d6{transition-delay:.6s}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      #hero{grid-template-columns:1fr}
+      .exp-layout{grid-template-columns:1fr}
+      .exp-side{position:static}
+    }
+    @media(max-width:768px){
+      .about-grid,.contact-grid{grid-template-columns:1fr;gap:3rem}
+      .sk-grid{grid-template-columns:1fr 1fr}
+      .proj-grid{grid-template-columns:1fr}
+      .news-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:540px){
+      .nav-links,.nav-cta{display:none}
+      .sk-grid{grid-template-columns:1fr}
+      .badge-row{flex-direction:column}
+      .news-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div id="cur"></div>
+  <div id="cring"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">Sunil <em>Kumar.</em></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Expertise</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#blog">Trade News</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="mailto:sunilkumarb2597@gmail.com" class="nav-cta">Hire Me</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div>
+      <div class="hero-eyebrow">CUSECO · Lean Six Sigma Green Belt</div>
+      <h1>Sunil<br/><em>Kumar.</em></h1>
+      <p class="hero-role">Global Trade Compliance Professional</p>
+      <div class="hero-cert">🎖️ Certified US Export Compliance Officer</div>
+      <p class="hero-desc">6+ years specializing in export controls (EAR, ITAR, OFAC, EU Dual-Use, SCOMET), HTS/ECCN classification, FTA qualification, and sanctions screening — currently <strong>Associate Manager at EY Global Delivery Services</strong>.</p>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-p">View Experience</a>
+        <a href="mailto:sunilkumarb2597@gmail.com" class="btn-g">Get in Touch</a>
+      </div>
+      <div class="lang-row">
+        <span class="lang-lbl">Languages:</span>
+        <span class="lang-pill">English</span><span class="lang-pill">Hindi</span>
+        <span class="lang-pill">Tamil</span><span class="lang-pill">Marwari</span><span class="lang-pill">Marathi</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-card fade-in d1">
+        <div class="stat-grid">
+          <div><p class="s-lbl">Experience</p><p class="s-val">6<sup>+ yrs</sup></p></div>
+          <div><p class="s-lbl">Products Classified</p><p class="s-val">50<sup>K+</sup></p></div>
+          <div><p class="s-lbl">Countries Covered</p><p class="s-val">40<sup>+</sup></p></div>
+          <div><p class="s-lbl">HS Codes Analysed</p><p class="s-val">3<sup>K+</sup></p></div>
+        </div>
+      </div>
+      <div class="ticker-wrap fade-in d2">
+        <span class="ticker-lbl">🏆 Awards</span>
+        <div class="ticker-track"><div class="ticker-inner">
+          <span>Exceptional Client Service — EY 2024</span>
+          <span>Top Tier Instructor — EY 2024</span>
+          <span>Pursuing Innovation — EY 2023</span>
+          <span>Highest Performing Team — EY 2025</span>
+          <span>Inspirational Leadership — Deloitte 2021</span>
+          <span>Applause Award — Deloitte 2020</span>
+          <!-- loop duplicate -->
+          <span>Exceptional Client Service — EY 2024</span>
+          <span>Top Tier Instructor — EY 2024</span>
+          <span>Pursuing Innovation — EY 2023</span>
+          <span>Highest Performing Team — EY 2025</span>
+        </div></div>
+      </div>
+      <div class="badge-row fade-in d3">
+        <div class="b-pill"><span class="b-ico">🤖</span><span>30% Cost Savings via Gen-AI</span></div>
+        <div class="b-pill"><span class="b-ico">⚡</span><span>90% Classification Efficiency</span></div>
+      </div>
+      <div class="badge-row fade-in d4">
+        <div class="b-pill"><span class="b-ico">🏭</span><span>11 Industries Served</span></div>
+        <div class="b-pill"><span class="b-ico">📋</span><span>20+ Projects Led at EY</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section id="about">
+    <div class="s-hdr fade-in">
+      <div class="eyebrow">About Me</div>
+      <h2>Compliance expertise<br/><em>meets business acumen.</em></h2>
+      <div class="s-rule"></div>
+    </div>
+    <div class="about-grid">
+      <div class="fade-in">
+        <p>I'm a <strong>Global Trade Compliance professional</strong> with 6+ years at <strong>EY</strong> and <strong>Deloitte</strong>, advising multinationals across Pharma, Aerospace, Renewable Energy, Technology, and 7 other sectors on navigating the world's most complex regulatory environments.</p>
+        <p>My differentiator is bridging deep regulatory expertise with <strong>data-driven automation</strong> — building Power BI compliance dashboards, deploying Gen-AI monitoring tools, and leading AI/ML transformation projects. I hold an MBA (Finance) from MIT World Peace University and a BBA from PSG College, Coimbatore.</p>
+        <p>Outside work, I follow <strong>emerging technologies, AI/Gen-AI, investing, and global markets</strong> — which keeps me naturally attuned to how macro trends shape trade policy.</p>
+        <div class="about-links">
+          <a href="mailto:sunilkumarb2597@gmail.com">✉️ sunilkumarb2597@gmail.com</a>
+          <a href="tel:+918807116631">📞 +91 88071 16631</a>
+          <a href="https://www.linkedin.com/in/thesunilkumarb" target="_blank">💼 linkedin.com/in/thesunilkumarb</a>
+        </div>
+      </div>
+      <div>
+        <div class="ind-bar fade-in d1">
+          <div class="ind-lbl">Industries Served</div>
+          <div class="ind-tags">
+            <span class="i-tag">Automotive</span><span class="i-tag">Aerospace</span>
+            <span class="i-tag">Chemicals</span><span class="i-tag">Pharma &amp; Life Sciences</span>
+            <span class="i-tag">Oil &amp; Gas</span><span class="i-tag">Renewable Energy</span>
+            <span class="i-tag">Agriculture</span><span class="i-tag">Food &amp; Beverage</span>
+            <span class="i-tag">Textiles</span><span class="i-tag">Technology</span><span class="i-tag">Cosmetics</span>
+          </div>
+        </div>
+        <div class="edu-block fade-in d2">
+          <div class="edu-lbl">Education</div>
+          <div class="edu-item">
+            <div class="edu-deg">MBA — Finance</div>
+            <div class="edu-school">MIT World Peace University, Pune</div>
+            <div class="edu-year">2017–2019 · Score: 8.85/10</div>
+          </div>
+          <div class="edu-item">
+            <div class="edu-deg">BBA — Business Management &amp; Information Systems</div>
+            <div class="edu-school">PSG College of Arts &amp; Science, Coimbatore</div>
+            <div class="edu-year">2014–2017 · Score: 7.5/10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SKILLS ── -->
+  <section id="skills">
+    <div class="s-hdr fade-in">
+      <div class="eyebrow">Core Competencies</div>
+      <h2>Skills &amp; <em>Specializations</em></h2>
+      <div class="s-rule"></div>
+    </div>
+    <div class="sk-grid">
+      <div class="sk-card fade-in d1">
+        <div class="sk-ico">🚢</div>
+        <div class="sk-title">Export Controls</div><div class="sk-sub">Licensing &amp; Regulations</div>
+        <div class="sk-tags"><span class="sk-tag">EAR / BIS</span><span class="sk-tag">ITAR / DDTC</span><span class="sk-tag">OFAC</span><span class="sk-tag">EU Dual-Use</span><span class="sk-tag">SCOMET</span><span class="sk-tag">ECCN Classification</span><span class="sk-tag">Technology Transfer</span><span class="sk-tag">Deemed Export</span></div>
+      </div>
+      <div class="sk-card fade-in d2">
+        <div class="sk-ico">📦</div>
+        <div class="sk-title">Customs &amp; Classification</div><div class="sk-sub">HTS · ECCN · Tariff Analysis</div>
+        <div class="sk-tags"><span class="sk-tag">HTS Classification</span><span class="sk-tag">AD/CVD</span><span class="sk-tag">Section 232 &amp; 301</span><span class="sk-tag">OGA-PGA Analysis</span><span class="sk-tag">CBP Rulings</span><span class="sk-tag">WCO Notes</span><span class="sk-tag">EU BTI / ECICS</span><span class="sk-tag">Section 9817</span></div>
+      </div>
+      <div class="sk-card fade-in d3">
+        <div class="sk-ico">🏦</div>
+        <div class="sk-title">Sanctions &amp; Screening</div><div class="sk-sub">OFAC &amp; Global Programs</div>
+        <div class="sk-tags"><span class="sk-tag">Restricted Party Screening</span><span class="sk-tag">DPS / RPS</span><span class="sk-tag">OFAC Sanctions</span><span class="sk-tag">UN &amp; EU Sanctions</span><span class="sk-tag">SDN Lists</span><span class="sk-tag">Global Sanctions Compliance</span></div>
+      </div>
+      <div class="sk-card fade-in d4">
+        <div class="sk-ico">🤝</div>
+        <div class="sk-title">FTA &amp; Trade Policy</div><div class="sk-sub">Preferential Trade &amp; Monitoring</div>
+        <div class="sk-tags"><span class="sk-tag">FTA Qualification</span><span class="sk-tag">BOM Analysis</span><span class="sk-tag">Country of Origin</span><span class="sk-tag">SPS-TBT</span><span class="sk-tag">Regulatory Monitoring</span><span class="sk-tag">Tariff &amp; Policy Tracking</span></div>
+      </div>
+      <div class="sk-card fade-in d5">
+        <div class="sk-ico">🤖</div>
+        <div class="sk-title">Automation &amp; Tools</div><div class="sk-sub">Tech, Data &amp; AI Platforms</div>
+        <div class="sk-tags"><span class="sk-tag">SAP / ERP</span><span class="sk-tag">Descartes</span><span class="sk-tag">Microsoft Power BI</span><span class="sk-tag">Gen-AI Tools</span><span class="sk-tag">AI/ML Workflows</span><span class="sk-tag">Process Automation</span></div>
+      </div>
+      <div class="sk-card fade-in d6">
+        <div class="sk-ico">📋</div>
+        <div class="sk-title">Management &amp; Training</div><div class="sk-sub">Leadership &amp; Delivery</div>
+        <div class="sk-tags"><span class="sk-tag">Project Management</span><span class="sk-tag">Training &amp; Development</span><span class="sk-tag">Recruitment</span><span class="sk-tag">SLA &amp; Cost Analysis</span><span class="sk-tag">Lean Six Sigma</span><span class="sk-tag">Process Improvement</span></div>
+      </div>
+    </div>
+    <div class="cert-strip">
+      <div class="cert-card fade-in d1"><div class="cert-badge">🎖️</div><div><div class="cert-name">CUSECO</div><div class="cert-issuer">International Import Export Institute (IIEI)</div><div class="cert-yr">2021</div></div></div>
+      <div class="cert-card fade-in d2"><div class="cert-badge">⚡</div><div><div class="cert-name">Lean Six Sigma — Green Belt</div><div class="cert-issuer">Simplilearn</div><div class="cert-yr">2025</div></div></div>
+      <div class="cert-card fade-in d3"><div class="cert-badge">🌐</div><div><div class="cert-name">Global Sanctions Compliance Certificate</div><div class="cert-issuer">International Trade Council</div><div class="cert-yr">2025</div></div></div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE ── -->
+  <section id="experience">
+    <div class="s-hdr fade-in">
+      <div class="eyebrow">Work History</div>
+      <h2>Professional <em>Experience</em></h2>
+      <div class="s-rule"></div>
+    </div>
+    <div class="exp-layout">
+      <div class="exp-side fade-in">
+        <div class="exp-side-title">6+ Years of <em>Global Trade</em> Excellence</div>
+        <div class="exp-box"><div class="exp-box-lbl">Current Role</div><div class="exp-box-txt">Associate Manager, Global Trade</div><div class="exp-box-sub">EY GDS · Hyderabad, India</div></div>
+        <div class="award-list">
+          <div class="aw">Exceptional Client Service — EY 2024</div>
+          <div class="aw">Top Tier Instructor — EY 2024</div>
+          <div class="aw">Pursuing Innovation — EY 2023</div>
+          <div class="aw">Highest Performing Team — EY Dec 2022 &amp; Feb 2025</div>
+          <div class="aw">Spot Awards — EY Dec 2023, Jan 2024</div>
+          <div class="aw">Inspirational Leadership — Deloitte Q1 &amp; Q2 2021</div>
+          <div class="aw">Applause Award — Deloitte 2020</div>
+          <div class="aw">Spot Awards — Deloitte 2019 &amp; 2021</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="tl">
+          <div class="tl-dot"></div>
+          <div class="tl-date">June 2022 — Present</div>
+          <div class="tl-role">Associate Manager, Global Trade</div>
+          <div class="tl-co">EY Global Delivery Services <span>· Hyderabad, India</span></div>
+          <ul class="tl-list">
+            <li><strong>Project Lead — CGMS:</strong> Analysed 3,000+ HS codes and 170+ regulations across US, EU, UK, Switzerland, China, and Australia for a major pharma client; built a Power BI tool to track all import/export obligations with related licenses and certifications.</li>
+            <li><strong>Project Lead — Global News Monitoring:</strong> Tracked Section 232, AD/CVD, incentives, and policy across 40+ countries for a solar tracker manufacturer; delivered weekly insights and monthly reports. Achieved <strong>30% cost savings via Gen-AI automation</strong>.</li>
+            <li>Managed <strong>20+ projects</strong> — allocation, mailbox management, customs query resolution, and broker dispute management.</li>
+            <li>Developed a comprehensive <strong>Export Policy Directory for 30+ countries</strong> for a multinational client.</li>
+            <li>Contributed to an <strong>AI/ML classification transformation</strong> — enhanced efficiency and standardization to 90%, achieving measurable cost savings.</li>
+            <li>Introduced dynamic billing and identified SOW gaps — leading to a <strong>10% revenue increase</strong> on a major classification project.</li>
+            <li>Delivered <strong>50+ hours of training</strong> on export controls, ECCN, FTA, sanctions, and licensing; led recruitment drives.</li>
+          </ul>
+          <div class="chips"><span class="chip">EAR · ITAR</span><span class="chip">CGMS</span><span class="chip">Power BI</span><span class="chip">Gen-AI</span><span class="chip">AD/CVD</span><span class="chip">AI/ML</span></div>
+        </div>
+        <div class="tl">
+          <div class="tl-dot"></div>
+          <div class="tl-date">May 2019 — May 2022</div>
+          <div class="tl-role">Senior Consultant, Global Trade Advisory</div>
+          <div class="tl-co">Deloitte Tax Services India <span>· Hyderabad, India</span></div>
+          <ul class="tl-list">
+            <li>Managed a significant classification project, overseeing delivery and full team support.</li>
+            <li>Classified <strong>50,000+ products</strong> for HTS and ECCN across Americas, EMEA, and APAC.</li>
+            <li>Reviewed CBP Rulings, WCO Explanatory Notes, EU BTI rulings, and ECICS for accurate tariff classification.</li>
+            <li>Assisted in automation — built SAP and cornerstone workflows, extracted technical information and BOMs.</li>
+            <li>Trained new hires on HS/ECCN classification and client tools.</li>
+          </ul>
+          <div class="chips"><span class="chip">HTS / ECCN</span><span class="chip">CBP Rulings</span><span class="chip">SAP</span><span class="chip">EMEA · APAC</span><span class="chip">Training</span></div>
+        </div>
+        <div class="tl">
+          <div class="tl-dot"></div>
+          <div class="tl-date">May 2018 — July 2018</div>
+          <div class="tl-role">Intern — Bank of India</div>
+          <div class="tl-co">Bank of India <span>· Internship</span></div>
+          <ul class="tl-list">
+            <li>Managed client onboarding, facilitated <strong>200+ account openings</strong>, and developed a due diligence checklist to streamline credit request management.</li>
+          </ul>
+          <div class="chips"><span class="chip">Due Diligence</span><span class="chip">KYC</span><span class="chip">Client Onboarding</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects">
+    <div class="s-hdr fade-in">
+      <div class="eyebrow">Notable Work</div>
+      <h2>Key <em>Projects</em></h2>
+      <div class="s-rule"></div>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-card">
+        <div class="proj-head"><span class="proj-num">01</span><span class="proj-co">EY · Pharma &amp; Life Sciences</span></div>
+        <div class="proj-body">
+          <div class="proj-title">Controlled Goods Monitoring Service (CGMS)</div>
+          <div class="proj-desc">Led global regulatory tracking across 3,000+ HS codes and 170+ regulations in 6 jurisdictions (US, EU, UK, Switzerland, China, Australia). Built a Power BI dashboard to provide real-time compliance visibility for import/export obligations, permits, and certifications.</div>
+          <div class="proj-impact"><strong>Impact:</strong> First-ever centralized compliance dashboard for the client across 6 jurisdictions</div>
+          <div class="proj-tags"><span class="proj-tag">Power BI</span><span class="proj-tag">HS Classification</span><span class="proj-tag">6 Jurisdictions</span><span class="proj-tag">Pharma</span></div>
+        </div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-head"><span class="proj-num">02</span><span class="proj-co">EY · Renewable Energy</span></div>
+        <div class="proj-body">
+          <div class="proj-title">Global Trade News Monitoring — Solar Tracker Manufacturer</div>
+          <div class="proj-desc">Built a proactive regulatory intelligence workflow tracking Section 232, AD/CVD, incentives, and policy updates across 40+ countries. Automated monitoring with Gen-AI, delivering weekly insights and monthly executive reports.</div>
+          <div class="proj-impact"><strong>Impact:</strong> 30% cost reduction through Gen-AI workflow automation</div>
+          <div class="proj-tags"><span class="proj-tag">Gen-AI</span><span class="proj-tag">Section 232</span><span class="proj-tag">AD/CVD</span><span class="proj-tag">40+ Countries</span></div>
+        </div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-head"><span class="proj-num">03</span><span class="proj-co">EY · Multinational Client</span></div>
+        <div class="proj-body">
+          <div class="proj-title">Export Policy Directory — 30+ Countries</div>
+          <div class="proj-desc">Designed a comprehensive export policy reference covering licensing requirements, prohibited goods, dual-use controls, and regulatory contacts across 30+ countries — becoming the single source of truth for the client's global trade team.</div>
+          <div class="proj-impact"><strong>Impact:</strong> Reduced turnaround time on export decisions significantly across global markets</div>
+          <div class="proj-tags"><span class="proj-tag">Export Controls</span><span class="proj-tag">Policy Design</span><span class="proj-tag">30+ Countries</span></div>
+        </div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-head"><span class="proj-num">04</span><span class="proj-co">EY · AI Transformation</span></div>
+        <div class="proj-body">
+          <div class="proj-title">AI/ML-Driven Classification Transformation</div>
+          <div class="proj-desc">Contributed to a large-scale AI/ML transformation integrating machine learning models into HS/ECCN classification workflows — reducing manual effort and error rates while standardizing classification quality across business units.</div>
+          <div class="proj-impact"><strong>Impact:</strong> 90% classification efficiency &amp; standardization with measurable cost savings</div>
+          <div class="proj-tags"><span class="proj-tag">AI / ML</span><span class="proj-tag">Classification</span><span class="proj-tag">Automation</span><span class="proj-tag">ERP</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BLOG / TRADE NEWS ── -->
+  <section id="blog">
+    <div class="s-hdr fade-in">
+      <div class="eyebrow">Trade Intelligence</div>
+      <h2>Latest Global <em>Trade News</em></h2>
+      <div class="s-rule"></div>
+    </div>
+    <div class="blog-toolbar fade-in">
+      <div class="blog-filters">
+        <button class="filter-btn active" data-filter="all">All Topics</button>
+        <button class="filter-btn" data-filter="export controls">Export Controls</button>
+        <button class="filter-btn" data-filter="tariffs">Tariffs &amp; AD/CVD</button>
+        <button class="filter-btn" data-filter="sanctions">Sanctions</button>
+        <button class="filter-btn" data-filter="fta">FTAs &amp; Policy</button>
+        <button class="filter-btn" data-filter="customs">Customs</button>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" onclick="fetchNews()">
+        <span class="spin" id="spinIcon">↻</span> Refresh News
+      </button>
+    </div>
+    <div class="news-grid" id="newsGrid">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact">
+    <div class="contact-grid">
+      <div>
+        <div class="s-hdr fade-in">
+          <div class="eyebrow">Get in Touch</div>
+          <h2>Let's <em>Connect</em></h2>
+          <div class="s-rule" style="background:var(--gold-lt)"></div>
+        </div>
+        <p class="c-intro">Open to advisory engagements, consulting projects, or simply a conversation about the evolving global trade landscape.</p>
+        <div class="c-links">
+          <a href="mailto:sunilkumarb2597@gmail.com" class="c-link"><div class="c-ico">✉️</div>sunilkumarb2597@gmail.com</a>
+          <a href="tel:+918807116631" class="c-link"><div class="c-ico">📞</div>+91 88071 16631</a>
+          <a href="https://www.linkedin.com/in/thesunilkumarb" target="_blank" class="c-link"><div class="c-ico">💼</div>linkedin.com/in/thesunilkumarb</a>
+          <div class="c-link" style="cursor:default"><div class="c-ico">📍</div>Hyderabad, India · Open to global opportunities</div>
+        </div>
+      </div>
+      <div>
+        <form class="c-form" onsubmit="handleSubmit(event)">
+          <div class="f-grp"><label class="f-lbl">Name</label><input type="text" class="f-in" placeholder="Jane Smith"/></div>
+          <div class="f-grp"><label class="f-lbl">Email</label><input type="email" class="f-in" placeholder="jane@company.com"/></div>
+          <div class="f-grp"><label class="f-lbl">Subject</label><input type="text" class="f-in" placeholder="Trade Compliance Inquiry"/></div>
+          <div class="f-grp"><label class="f-lbl">Message</label><textarea class="f-ta" placeholder="Tell me about your project…"></textarea></div>
+          <button type="submit" class="btn-send">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="f-copy">© 2025 Sunil Kumar · CUSECO · Associate Manager, Global Trade · EY · Hyderabad, India</p>
+    <p class="f-brand">Sunil Kumar.</p>
+  </footer>
+
+  <script>
+    /* ── CURSOR ── */
+    const cur=document.getElementById('cur'),cring=document.getElementById('cring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+    (function a(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cring.style.left=rx+'px';cring.style.top=ry+'px';requestAnimationFrame(a)})();
+    document.querySelectorAll('a,button,.b-pill,.proj-card,.sk-card,.news-card').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{cur.style.width='12px';cur.style.height='12px';cring.style.width='42px';cring.style.height='42px'});
+      el.addEventListener('mouseleave',()=>{cur.style.width='7px';cur.style.height='7px';cring.style.width='28px';cring.style.height='28px'});
+    });
+
+    /* ── NAV SCROLL ── */
+    window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',scrollY>60));
+
+    /* ── SCROLL REVEAL ── */
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.1});
+    document.querySelectorAll('.fade-in,.tl,.proj-card').forEach(el=>io.observe(el));
+    document.querySelectorAll('.tl').forEach((el,i)=>el.style.transitionDelay=(i*.18)+'s');
+    document.querySelectorAll('.proj-card').forEach((el,i)=>el.style.transitionDelay=(i*.1)+'s');
+    window.addEventListener('load',()=>document.querySelectorAll('#hero .fade-in').forEach((el,i)=>setTimeout(()=>el.classList.add('visible'),350+i*150)));
+
+    /* ── CONTACT FORM ── */
+    function handleSubmit(e){
+      e.preventDefault();
+      const b=e.target.querySelector('.btn-send');
+      b.textContent='Message Sent ✓';b.style.background='#6bae8c';
+      setTimeout(()=>{b.textContent='Send Message →';b.style.background='';e.target.reset()},3500);
+    }
+
+    /* ── FILTER ── */
+    let currentFilter='all';
+    document.querySelectorAll('.filter-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter=btn.dataset.filter;
+        fetchNews();
+      });
+    });
+
+    /* ── SKELETON LOADER ── */
+    function showSkeletons(){
+      const grid=document.getElementById('newsGrid');
+      grid.innerHTML=Array(6).fill(0).map(()=>`
+        <div class="skel-card">
+          <div class="skel-line w40 skeleton" style="height:10px;margin-bottom:1rem"></div>
+          <div class="skel-line w80 skeleton"></div>
+          <div class="skel-line w60 skeleton"></div>
+          <div class="skel-block skeleton"></div>
+          <div class="skel-line w90 skeleton"></div>
+          <div class="skel-line w60 skeleton"></div>
+        </div>`).join('');
+    }
+
+    /* ── AI NEWS FETCH ── */
+    async function fetchNews(){
+      const btn=document.getElementById('refreshBtn');
+      btn.classList.add('loading');
+      showSkeletons();
+
+      const topicMap={
+        'all':'latest global trade compliance news tariffs sanctions export controls customs 2025',
+        'export controls':'latest export controls EAR ITAR BIS news 2025',
+        'tariffs':'latest tariffs AD CVD Section 232 301 trade news 2025',
+        'sanctions':'latest OFAC sanctions news global trade 2025',
+        'fta':'latest free trade agreement FTA policy news 2025',
+        'customs':'latest customs regulations news global trade 2025'
+      };
+      const query=topicMap[currentFilter]||topicMap['all'];
+
+      const prompt=`You are a global trade compliance expert and news curator. Search the web for the most recent (2025) news and events about: "${query}".
+
+Return ONLY a valid JSON array of exactly 6 news items. No markdown, no preamble, no explanation — raw JSON only.
+
+Each item must follow this exact schema:
+{
+  "title": "concise news headline (max 12 words)",
+  "summary": "2-3 sentence professional summary of the news (60-80 words)",
+  "category": "one of: Export Controls | Tariffs & AD/CVD | Sanctions | FTA & Policy | Customs | Trade Tech",
+  "tags": ["tag1","tag2","tag3"],
+  "source": "Publication name (e.g. Reuters, BIS, OFAC, Federal Register)",
+  "date": "Month YYYY format (e.g. March 2025)"
+}
+
+Ensure news items are genuinely recent (2025), factually accurate, and relevant to global trade compliance professionals.`;
+
+      try{
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            model:'claude-sonnet-4-20250514',
+            max_tokens:1000,
+            tools:[{type:'web_search_20250305',name:'web_search'}],
+            messages:[{role:'user',content:prompt}]
+          })
+        });
+
+        if(!res.ok) throw new Error('API error '+res.status);
+        const data=await res.json();
+
+        // Extract text content (after tool use)
+        const text=data.content
+          .filter(c=>c.type==='text')
+          .map(c=>c.text)
+          .join('');
+
+        // Parse JSON — strip fences if present
+        const clean=text.replace(/```json|```/gi,'').trim();
+        const startIdx=clean.indexOf('[');
+        const endIdx=clean.lastIndexOf(']');
+        if(startIdx===-1||endIdx===-1) throw new Error('No JSON array found');
+
+        const items=JSON.parse(clean.slice(startIdx,endIdx+1));
+        renderNews(items);
+
+      }catch(err){
+        console.error('News fetch error:',err);
+        renderError();
+      }finally{
+        btn.classList.remove('loading');
+      }
+    }
+
+    /* ── RENDER NEWS CARDS ── */
+    function renderNews(items){
+      const catColors={
+        'Export Controls':'#8B5A2B',
+        'Tariffs & AD/CVD':'#5A7A4A',
+        'Sanctions':'#7A4A5A',
+        'FTA & Policy':'#4A6A8A',
+        'Customs':'#6A5A8A',
+        'Trade Tech':'#5A7A7A'
+      };
+
+      const grid=document.getElementById('newsGrid');
+      grid.innerHTML=items.map((item,i)=>{
+        const color=catColors[item.category]||'var(--gold)';
+        const delay=(i*.08)+'s';
+        const tags=(item.tags||[]).slice(0,3).map(t=>`<span class="news-tag">${t}</span>`).join('');
+        return `
+          <div class="news-card" style="animation-delay:${delay}">
+            <div class="news-cat">
+              <span class="news-cat-badge" style="color:${color};background:${color}18;border-color:${color}44">${item.category||'Trade News'}</span>
+              <span class="news-date">${item.date||'2025'}</span>
+            </div>
+            <div class="news-body">
+              <div class="news-title">${item.title}</div>
+              <div class="news-summary">${item.summary}</div>
+              <div class="news-tags">${tags}</div>
+              <div class="news-source">${item.source||'Global Trade Source'}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Reattach cursor events for new cards
+      document.querySelectorAll('.news-card').forEach(el=>{
+        el.addEventListener('mouseenter',()=>{cur.style.width='12px';cur.style.height='12px';cring.style.width='42px';cring.style.height='42px'});
+        el.addEventListener('mouseleave',()=>{cur.style.width='7px';cur.style.height='7px';cring.style.width='28px';cring.style.height='28px'});
+      });
+    }
+
+    /* ── RENDER ERROR ── */
+    function renderError(){
+      document.getElementById('newsGrid').innerHTML=`
+        <div class="news-error">
+          <div class="err-icon">📡</div>
+          <p>Could not fetch the latest trade news. This may be a temporary API issue.</p>
+          <p style="font-size:.78rem;color:var(--ink-light)">Check your network connection or try again in a moment.</p>
+          <button onclick="fetchNews()" style="margin-top:.5rem">Try Again</button>
+        </div>`;
+    }
+
+    /* ── AUTO-LOAD NEWS ON PAGE LOAD ── */
+    fetchNews();
+  </script>
+</body>
+</html>
