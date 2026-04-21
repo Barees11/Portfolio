@@ -72,10 +72,17 @@ def init_db():
             )
 
 
+def is_owner():
+    # Owner mode is granted simply by having `?owner` in the request URL.
+    # No password — keeps things simple. The owner UI is hidden from the
+    # public-facing page, so visitors won't discover it.
+    return request.args.get("owner") is not None
+
+
 def admin_required(f):
     @wraps(f)
     def w(*a, **k):
-        if not session.get("is_admin"):
+        if not is_owner():
             return jsonify({"error": "unauthorized"}), 401
         return f(*a, **k)
     return w
@@ -102,27 +109,10 @@ def _no_cache_in_dev(resp):
 
 
 # ---------- Admin auth ----------
-@app.post("/api/admin/login")
-def admin_login():
-    data = request.get_json(silent=True) or {}
-    pw = (data.get("password") or "").strip()
-    expected = (ADMIN_PASSWORD or "").strip()
-    if not expected or pw != expected:
-        return jsonify({"ok": False, "error": "Invalid password"}), 401
-    session["is_admin"] = True
-    session.permanent = True
-    return jsonify({"ok": True})
-
-
-@app.post("/api/admin/logout")
-def admin_logout():
-    session.pop("is_admin", None)
-    return jsonify({"ok": True})
-
-
+# No password. Owner mode is granted by the `?owner` URL parameter.
 @app.get("/api/admin/me")
 def admin_me():
-    return jsonify({"is_admin": bool(session.get("is_admin"))})
+    return jsonify({"is_admin": is_owner()})
 
 
 # ---------- Posts ----------

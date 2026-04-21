@@ -719,13 +719,10 @@ I help companies turn trade compliance from a cost centre into a strategic advan
     <div class="s-rule"></div>
   </div>
 
-  <!-- Admin bar (hidden for visitors; revealed in owner mode or via ?owner URL) -->
+  <!-- Admin bar (only shown when ?owner is in the URL) -->
   <div class="admin-bar fade-in" id="adminBar" style="display:none">
-    <div id="adminStatus" class="admin-status">Owner mode · You can publish, delete, and manage posts.</div>
-    <div class="admin-bar-actions">
-      <button class="admin-link" id="adminLoginBtn" onclick="openAdminLogin()" style="display:none">Owner login</button>
-      <button class="admin-link" id="adminLogoutBtn" onclick="adminLogout()" style="display:none">Log out</button>
-    </div>
+    <div id="adminStatus" class="admin-status">Owner mode · You can publish, delete, and manage posts and news.</div>
+    <div class="admin-bar-actions"></div>
   </div>
 
   <!-- Composer (admin only) -->
@@ -762,19 +759,6 @@ I help companies turn trade compliance from a cost centre into a strategic advan
   <div class="personal-feed" id="personalFeed"></div>
 </section>
 
-<!-- Admin login modal -->
-<div class="modal-backdrop" id="adminModal" onclick="if(event.target===this)closeAdminLogin()">
-  <div class="modal">
-    <div class="modal-title">Owner login</div>
-    <div class="modal-sub">Enter the admin password to manage posts.</div>
-    <input type="password" id="adminPwd" class="modal-input" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()"/>
-    <div class="modal-err" id="adminErr"></div>
-    <div class="modal-actions">
-      <button class="btn-ghost" onclick="closeAdminLogin()">Cancel</button>
-      <button class="btn-primary" onclick="adminLogin()">Sign in</button>
-    </div>
-  </div>
-</div>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -865,55 +849,17 @@ function selectType(btn){
   selectedType=btn.dataset.type;
 }
 
-const ownerRequested = new URLSearchParams(location.search).has('owner');
-async function refreshAdminState(){
-  try{
-    const r=await fetch('/api/admin/me',{credentials:'same-origin'});
-    const j=await r.json();
-    isAdmin=!!j.is_admin;
-  }catch(e){isAdmin=false}
-  applyAdminUI();
-}
+// Owner mode is purely URL-based: ?owner reveals all admin UI and is sent
+// with admin API calls. Visitors don't see anything.
+isAdmin = new URLSearchParams(location.search).has('owner');
+const ownerQS = isAdmin ? '?owner' : '';
+async function refreshAdminState(){applyAdminUI()}
 function applyAdminUI(){
-  // Owner bar/composer is hidden for visitors. Visible if logged in,
-  // or if the visitor explicitly opens ?owner (then they only see the login button).
-  const showBar = isAdmin || ownerRequested;
-  document.getElementById('adminBar').style.display=showBar?'flex':'none';
+  document.getElementById('adminBar').style.display=isAdmin?'flex':'none';
   document.getElementById('composer').style.display=isAdmin?'block':'none';
   document.getElementById('newsComposer').style.display=isAdmin?'block':'none';
-  document.getElementById('adminLoginBtn').style.display=(!isAdmin && ownerRequested)?'inline-block':'none';
-  document.getElementById('adminLogoutBtn').style.display=isAdmin?'inline-block':'none';
-  document.getElementById('adminStatus').textContent=isAdmin
-    ?'Owner mode · You can publish, delete, and manage posts and news.'
-    :'Owner sign-in · Visitors can\'t see this bar.';
   document.querySelectorAll('.post-delete-btn').forEach(b=>b.style.display=isAdmin?'inline-block':'none');
   document.querySelectorAll('.news-card').forEach(c=>c.classList.toggle('is-admin',isAdmin));
-}
-// Hidden keyboard shortcut: Ctrl/Cmd + Shift + L → owner login
-document.addEventListener('keydown',e=>{
-  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(e.key==='L'||e.key==='l')){
-    e.preventDefault();
-    document.getElementById('adminBar').style.display='flex';
-    document.getElementById('adminLoginBtn').style.display=isAdmin?'none':'inline-block';
-    if(!isAdmin)openAdminLogin();
-  }
-});
-
-function openAdminLogin(){document.getElementById('adminErr').textContent='';document.getElementById('adminPwd').value='';document.getElementById('adminModal').classList.add('open');setTimeout(()=>document.getElementById('adminPwd').focus(),60)}
-function closeAdminLogin(){document.getElementById('adminModal').classList.remove('open')}
-async function adminLogin(){
-  const pw=document.getElementById('adminPwd').value;
-  const err=document.getElementById('adminErr');err.textContent='';
-  try{
-    const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({password:pw})});
-    if(!r.ok){const j=await r.json().catch(()=>({}));err.textContent=j.error||'Sign-in failed.';return}
-    closeAdminLogin();
-    await refreshAdminState();
-  }catch(e){err.textContent='Network error. Try again.'}
-}
-async function adminLogout(){
-  await fetch('/api/admin/logout',{method:'POST',credentials:'same-origin'});
-  await refreshAdminState();
 }
 
 async function loadPosts(){
@@ -1018,7 +964,7 @@ async function submitComment(id,wrap){
 async function deletePost(id,wrap){
   if(!isAdmin)return;
   if(!confirm('Delete this post permanently?'))return;
-  const r=await fetch(`/api/posts/${id}`,{method:'DELETE',credentials:'same-origin'});
+  const r=await fetch(`/api/posts/${id}${ownerQS}`,{method:'DELETE',credentials:'same-origin'});
   if(r.ok)wrap.remove();
 }
 
@@ -1048,7 +994,7 @@ async function publishPost(){
   fd.append('title',title);
   fd.append('body',body);
   if(file)fd.append('image',file);
-  const r=await fetch('/api/posts',{method:'POST',credentials:'same-origin',body:fd});
+  const r=await fetch('/api/posts'+ownerQS,{method:'POST',credentials:'same-origin',body:fd});
   if(r.status===401){err.textContent='Please sign in as owner.';return}
   if(!r.ok){const j=await r.json().catch(()=>({}));err.textContent=j.error||'Could not publish.';return}
   document.getElementById('postTitle').value='';
@@ -1138,7 +1084,7 @@ async function publishNews(){
   const err=document.getElementById('ncErr');err.textContent='';
   if(!t||!s||!u){err.textContent='Headline, summary, and URL are required.';return}
   try{
-    const r=await fetch('/api/news',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({title:t,summary:s,url:u,source:src,topic,published_at:date})});
+    const r=await fetch('/api/news'+ownerQS,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({title:t,summary:s,url:u,source:src,topic,published_at:date})});
     if(r.status===401){err.textContent='Please sign in as owner.';return}
     if(!r.ok){const j=await r.json().catch(()=>({}));err.textContent=j.error||'Could not publish.';return}
     document.getElementById('ncTitle').value='';
@@ -1153,7 +1099,7 @@ async function publishNews(){
 async function deleteNews(id,card){
   if(!isAdmin)return;
   if(!confirm('Delete this news item?'))return;
-  const r=await fetch(`/api/news/${id}`,{method:'DELETE',credentials:'same-origin'});
+  const r=await fetch(`/api/news/${id}${ownerQS}`,{method:'DELETE',credentials:'same-origin'});
   if(r.ok)card.remove();
 }
 
