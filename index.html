@@ -380,6 +380,34 @@ footer{background:#060E1C;padding:1.5rem 5vw;display:flex;justify-content:space-
 .comment-form button:hover{background:var(--blue-lt)}
 @media (max-width:640px){.comment-form{grid-template-columns:1fr}}
 .feed-empty{text-align:center;padding:2.5rem 1rem;color:var(--ink-lt);font-size:.9rem;border:1px dashed var(--rule);border-radius:8px}
+
+/* NEWS — admin composer */
+.news-composer{background:var(--off-white);border:1px solid var(--rule);border-radius:10px;padding:1.1rem 1.2rem;margin-bottom:1.5rem}
+.nc-title{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:.85rem}
+.nc-grid{display:grid;grid-template-columns:2fr 1fr;gap:.6rem}
+.nc-grid input,.nc-grid select,.nc-grid textarea{padding:.55rem .7rem;font-size:.85rem;border:1px solid var(--rule);border-radius:5px;font-family:var(--sans);outline:none;transition:border-color .2s;background:#fff}
+.nc-grid input:focus,.nc-grid select:focus,.nc-grid textarea:focus{border-color:var(--blue-mid)}
+.nc-grid textarea{grid-column:1/-1;min-height:80px;resize:vertical;line-height:1.5}
+.nc-actions{display:flex;justify-content:flex-end;align-items:center;gap:.8rem;margin-top:.8rem}
+.nc-err{color:#dc2626;font-size:.78rem}
+@media (max-width:640px){.nc-grid{grid-template-columns:1fr}}
+
+/* NEWS — inshorts-style cards */
+.news-card{display:flex;flex-direction:column;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:1rem 1.1rem;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;text-decoration:none;color:inherit}
+.news-card:hover{border-color:var(--blue-mid);box-shadow:0 8px 24px rgba(10,22,40,.08);transform:translateY(-2px)}
+.nws-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.nws-topic{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-mid);background:var(--blue-pale);padding:.25rem .55rem;border-radius:3px}
+.nws-date{font-size:.7rem;color:var(--ink-lt)}
+.nws-title{font-family:var(--serif);font-size:1.05rem;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:.45rem}
+.nws-summary{font-size:.86rem;color:var(--ink-mid);line-height:1.55;margin-bottom:.8rem;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.nws-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rule-lt);padding-top:.7rem;margin-top:auto;font-size:.74rem;color:var(--ink-lt)}
+.nws-source{font-weight:600;color:var(--ink-mid)}
+.nws-link{color:var(--blue-mid);font-weight:600;text-decoration:none}
+.nws-link:hover{color:var(--blue-lt)}
+.nws-del{position:absolute;top:.55rem;right:.55rem;background:#fff;border:1px solid #fecaca;color:#dc2626;font-size:.62rem;font-weight:700;padding:.25rem .5rem;border-radius:3px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;font-family:var(--sans);display:none}
+.news-card.is-admin .nws-del{display:inline-block}
+.news-card .nws-del:hover{background:#fef2f2}
+.nws-empty{grid-column:1/-1;text-align:center;padding:2.5rem 1rem;color:var(--ink-lt);font-size:.9rem;border:1px dashed var(--rule);border-radius:8px}
 </style>
 </head>
 <body>
@@ -648,17 +676,7 @@ I help companies turn trade compliance from a cost centre into a strategic advan
   <div class="sources-banner fade-in d1">
     <span class="sb-icon">📡</span>
     <div class="sb-text">
-      <strong>How this works:</strong> News is fetched in real time using AI-powered web search, prioritising trusted trade compliance sources. Click Refresh to pull the latest updates, or filter by topic below.
-      <div class="sb-sources">
-        <span class="sb-src">Federal Register</span>
-        <span class="sb-src">BIS / bis.gov</span>
-        <span class="sb-src">OFAC / treasury.gov</span>
-        <span class="sb-src">WTO News</span>
-        <span class="sb-src">Reuters Trade</span>
-        <span class="sb-src">Trade Compliance Institute</span>
-        <span class="sb-src">Lexology</span>
-        <span class="sb-src">Export Compliance Daily</span>
-      </div>
+      <strong>Curated by Sunil:</strong> Short, Inshorts-style summaries of trade-compliance updates I'm tracking — each card links to the original source. Filter by topic below.
     </div>
   </div>
 
@@ -673,6 +691,31 @@ I help companies turn trade compliance from a cost centre into a strategic advan
     </div>
     <button class="refresh-btn" id="refreshBtn" onclick="fetchNews()"><span class="spin" id="spinIco">↻</span> Refresh</button>
   </div>
+
+  <!-- Admin: add news (visible only in owner mode) -->
+  <div class="news-composer admin-only fade-in" id="newsComposer" style="display:none">
+    <div class="nc-title">Add a curated news item</div>
+    <div class="nc-grid">
+      <input type="text" id="ncTitle" placeholder="Headline" maxlength="240"/>
+      <input type="text" id="ncSource" placeholder="Source (e.g. Federal Register)" maxlength="120"/>
+      <input type="url" id="ncUrl" placeholder="Original article URL (https://…)" maxlength="1000"/>
+      <input type="date" id="ncDate"/>
+      <select id="ncTopic">
+        <option value="all">All Topics</option>
+        <option value="export controls">Export Controls</option>
+        <option value="tariffs">Tariffs &amp; AD/CVD</option>
+        <option value="sanctions">Sanctions</option>
+        <option value="fta">FTAs &amp; Policy</option>
+        <option value="customs">Customs</option>
+      </select>
+      <textarea id="ncSummary" placeholder="Short summary (Inshorts-style, 2–3 sentences max)" maxlength="600"></textarea>
+    </div>
+    <div class="nc-actions">
+      <span class="nc-err" id="ncErr"></span>
+      <button class="post-btn" onclick="publishNews()">Publish news</button>
+    </div>
+  </div>
+
   <div class="news-grid" id="newsGrid"></div>
 </section>
 
@@ -684,11 +727,11 @@ I help companies turn trade compliance from a cost centre into a strategic advan
     <div class="s-rule"></div>
   </div>
 
-  <!-- Admin bar -->
-  <div class="admin-bar fade-in">
-    <div id="adminStatus" class="admin-status">Visitor view · Posts are read-only. You can like and comment below.</div>
+  <!-- Admin bar (hidden for visitors; revealed in owner mode or via ?owner URL) -->
+  <div class="admin-bar fade-in" id="adminBar" style="display:none">
+    <div id="adminStatus" class="admin-status">Owner mode · You can publish, delete, and manage posts.</div>
     <div class="admin-bar-actions">
-      <button class="admin-link" id="adminLoginBtn" onclick="openAdminLogin()">Owner login</button>
+      <button class="admin-link" id="adminLoginBtn" onclick="openAdminLogin()" style="display:none">Owner login</button>
       <button class="admin-link" id="adminLogoutBtn" onclick="adminLogout()" style="display:none">Log out</button>
     </div>
   </div>
@@ -821,6 +864,7 @@ function selectType(btn){
   selectedType=btn.dataset.type;
 }
 
+const ownerRequested = new URLSearchParams(location.search).has('owner');
 async function refreshAdminState(){
   try{
     const r=await fetch('/api/admin/me',{credentials:'same-origin'});
@@ -830,14 +874,29 @@ async function refreshAdminState(){
   applyAdminUI();
 }
 function applyAdminUI(){
+  // Owner bar/composer is hidden for visitors. Visible if logged in,
+  // or if the visitor explicitly opens ?owner (then they only see the login button).
+  const showBar = isAdmin || ownerRequested;
+  document.getElementById('adminBar').style.display=showBar?'flex':'none';
   document.getElementById('composer').style.display=isAdmin?'block':'none';
-  document.getElementById('adminLoginBtn').style.display=isAdmin?'none':'inline-block';
+  document.getElementById('newsComposer').style.display=isAdmin?'block':'none';
+  document.getElementById('adminLoginBtn').style.display=(!isAdmin && ownerRequested)?'inline-block':'none';
   document.getElementById('adminLogoutBtn').style.display=isAdmin?'inline-block':'none';
   document.getElementById('adminStatus').textContent=isAdmin
-    ?'Owner mode · You can publish, delete, and manage posts.'
-    :'Visitor view · Posts are read-only. You can like and comment below.';
+    ?'Owner mode · You can publish, delete, and manage posts and news.'
+    :'Owner sign-in · Visitors can\'t see this bar.';
   document.querySelectorAll('.post-delete-btn').forEach(b=>b.style.display=isAdmin?'inline-block':'none');
+  document.querySelectorAll('.news-card').forEach(c=>c.classList.toggle('is-admin',isAdmin));
 }
+// Hidden keyboard shortcut: Ctrl/Cmd + Shift + L → owner login
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(e.key==='L'||e.key==='l')){
+    e.preventDefault();
+    document.getElementById('adminBar').style.display='flex';
+    document.getElementById('adminLoginBtn').style.display=isAdmin?'none':'inline-block';
+    if(!isAdmin)openAdminLogin();
+  }
+});
 
 function openAdminLogin(){document.getElementById('adminErr').textContent='';document.getElementById('adminPwd').value='';document.getElementById('adminModal').classList.add('open');setTimeout(()=>document.getElementById('adminPwd').focus(),60)}
 function closeAdminLogin(){document.getElementById('adminModal').classList.remove('open')}
@@ -984,93 +1043,93 @@ document.querySelectorAll('.f-btn').forEach(btn=>{
   });
 });
 
-function showSkeleton(){
-  document.getElementById('newsGrid').innerHTML=Array(6).fill(0).map(()=>`
-    <div class="sk-news">
-      <div class="s-line w40"></div>
-      <div class="s-line w80" style="height:13px;margin-bottom:.9rem"></div>
-      <div class="s-line w60" style="height:13px"></div>
-      <div class="s-block"></div>
-      <div class="s-line w90"></div>
-      <div class="s-line w60"></div>
-    </div>`).join('');
+const TOPIC_LABEL={'all':'All','export controls':'Export Controls','tariffs':'Tariffs & AD/CVD','sanctions':'Sanctions','fta':'FTAs & Policy','customs':'Customs'};
+
+function showNewsLoading(){
+  document.getElementById('newsGrid').innerHTML='<div class="nws-empty">Loading news…</div>';
 }
-
-/* Trusted source list baked into the prompt */
-const TRUSTED_SOURCES=`
-Federal Register (federalregister.gov),
-BIS / Bureau of Industry and Security (bis.doc.gov),
-OFAC / U.S. Treasury (home.treasury.gov/policy-issues/office-of-foreign-assets-control-sanctions-programs-and-information),
-WTO News (wto.org/english/news_e),
-Reuters Trade & Commodities,
-Export Compliance Daily (exportcompliancedaily.com),
-Trade Compliance Institute,
-Lexology (lexology.com),
-Global Trade Magazine (globaltrademag.com),
-Customs and Border Protection (cbp.gov)
-`.trim();
-
-const topicMap={
-  'all':'global trade compliance news export controls tariffs sanctions customs FTA 2025',
-  'export controls':'export controls EAR ITAR BIS regulatory updates 2025',
-  'tariffs':'tariffs AD CVD antidumping countervailing duties Section 232 301 2025',
-  'sanctions':'OFAC sanctions designations SDN list updates 2025',
-  'fta':'free trade agreements FTA policy updates WTO 2025',
-  'customs':'customs regulations CBP rulings import compliance 2025'
-};
 
 async function fetchNews(){
   const btn=document.getElementById('refreshBtn');
-  btn.classList.add('loading');showSkeleton();
-
-  const prompt=`You are a global trade compliance expert and editor. Search for the 6 most recent (2025) news items and regulatory updates about: "${topicMap[currentFilter]||topicMap['all']}".
-
-Prioritise these trusted sources: ${TRUSTED_SOURCES}
-
-Return ONLY a valid JSON array of exactly 6 items. No markdown, no preamble, raw JSON only.
-Schema per item: {"title":"headline max 12 words","summary":"2-3 professional sentences, 60-80 words","category":"Export Controls|Tariffs & AD/CVD|Sanctions|FTA & Policy|Customs|Trade Tech","tags":["tag1","tag2","tag3"],"source":"Exact publication name","date":"Month YYYY"}
-
-Be factually accurate, genuinely current (2025), and professional.`;
-
+  if(btn)btn.classList.add('loading');
+  showNewsLoading();
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:prompt}]})
-    });
-    if(!res.ok)throw new Error('API '+res.status);
-    const data=await res.json();
-    const text=data.content.filter(c=>c.type==='text').map(c=>c.text).join('');
-    const clean=text.replace(/```json|```/gi,'').trim();
-    const s=clean.indexOf('['),e=clean.lastIndexOf(']');
-    if(s===-1||e===-1)throw new Error('No JSON array');
-    renderNews(JSON.parse(clean.slice(s,e+1)));
+    const q=currentFilter&&currentFilter!=='all'?'?topic='+encodeURIComponent(currentFilter):'';
+    const r=await fetch('/api/news'+q,{credentials:'same-origin'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    renderNews(await r.json());
   }catch(err){
-    console.error(err);renderError();
+    console.error(err);
+    document.getElementById('newsGrid').innerHTML=`<div class="nws-empty">Couldn't load news. <button class="post-btn" style="margin-left:.5rem" onclick="fetchNews()">Try again</button></div>`;
   }finally{
-    btn.classList.remove('loading');
+    if(btn)btn.classList.remove('loading');
   }
 }
 
-const catColors={
-  'Export Controls':'#1d4ed8','Tariffs & AD/CVD':'#0369a1',
-  'Sanctions':'#7c3aed','FTA & Policy':'#0891b2',
-  'Customs':'#0d9488','Trade Tech':'#2563C4'
-};
+function fmtNewsDate(item){
+  const iso=item.published_at||item.created_at;
+  if(!iso)return '';
+  const d=new Date(iso);
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
 
 function renderNews(items){
-  document.getElementById('newsGrid').innerHTML=items.map((item,i)=>{
-    const c=catColors[item.category]||'#2563C4';
-    const tags=(item.tags||[]).slice(0,3).map(t=>`<span class="n-tag">${t}</span>`).join('');
-    return`<div class="news-card" style="animation-delay:${i*.08}s">
-      <div class="news-cat-row"><span class="n-badge" style="color:${c};background:${c}18;border-color:${c}44">${item.category||'Trade News'}</span><span class="n-date">${item.date||'2025'}</span></div>
-      <div class="news-body"><div class="n-title">${item.title}</div><div class="n-summary">${item.summary}</div><div class="n-tags">${tags}</div><div class="n-source">${item.source||'Global Trade Source'}</div></div>
-    </div>`;
-  }).join('');
+  const grid=document.getElementById('newsGrid');
+  if(!Array.isArray(items)||items.length===0){
+    grid.innerHTML=`<div class="nws-empty">No news items yet${currentFilter!=='all'?' for this topic':''}.</div>`;
+    return;
+  }
+  grid.innerHTML='';
+  items.forEach((item,i)=>{
+    const card=document.createElement('div');
+    card.className='news-card'+(isAdmin?' is-admin':'');
+    card.style.animationDelay=(i*.05)+'s';
+    card.dataset.id=item.id;
+    card.innerHTML=`
+      <button class="nws-del" data-act="del-news">Delete</button>
+      <div class="nws-top">
+        <span class="nws-topic">${escHtml(TOPIC_LABEL[item.topic]||'News')}</span>
+        <span class="nws-date">${escHtml(fmtNewsDate(item))}</span>
+      </div>
+      <div class="nws-title">${escHtml(item.title)}</div>
+      <div class="nws-summary">${escHtml(item.summary)}</div>
+      <div class="nws-foot">
+        <span class="nws-source">${escHtml(item.source||'Source')}</span>
+        <a href="${escHtml(item.url)}" target="_blank" rel="noopener" class="nws-link">Read original →</a>
+      </div>`;
+    card.querySelector('[data-act=del-news]').addEventListener('click',()=>deleteNews(item.id,card));
+    grid.appendChild(card);
+  });
   attachCursor();
 }
 
-function renderError(){
-  document.getElementById('newsGrid').innerHTML=`<div class="news-err"><div style="font-size:2rem">📡</div><p>Could not load trade news right now. Check your connection and try again.</p><button onclick="fetchNews()">Try Again</button></div>`;
+async function publishNews(){
+  const t=document.getElementById('ncTitle').value.trim();
+  const s=document.getElementById('ncSummary').value.trim();
+  const u=document.getElementById('ncUrl').value.trim();
+  const src=document.getElementById('ncSource').value.trim();
+  const date=document.getElementById('ncDate').value;
+  const topic=document.getElementById('ncTopic').value;
+  const err=document.getElementById('ncErr');err.textContent='';
+  if(!t||!s||!u){err.textContent='Headline, summary, and URL are required.';return}
+  try{
+    const r=await fetch('/api/news',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({title:t,summary:s,url:u,source:src,topic,published_at:date})});
+    if(r.status===401){err.textContent='Please sign in as owner.';return}
+    if(!r.ok){const j=await r.json().catch(()=>({}));err.textContent=j.error||'Could not publish.';return}
+    document.getElementById('ncTitle').value='';
+    document.getElementById('ncSummary').value='';
+    document.getElementById('ncUrl').value='';
+    document.getElementById('ncSource').value='';
+    document.getElementById('ncDate').value='';
+    fetchNews();
+  }catch(e){err.textContent='Network error.'}
+}
+
+async function deleteNews(id,card){
+  if(!isAdmin)return;
+  if(!confirm('Delete this news item?'))return;
+  const r=await fetch(`/api/news/${id}`,{method:'DELETE',credentials:'same-origin'});
+  if(r.ok)card.remove();
 }
 
 fetchNews();

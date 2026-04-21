@@ -45,6 +45,16 @@ def init_db():
               body TEXT NOT NULL,
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
+            CREATE TABLE IF NOT EXISTS news_items (
+              id SERIAL PRIMARY KEY,
+              title TEXT NOT NULL,
+              summary TEXT NOT NULL,
+              url TEXT NOT NULL,
+              source TEXT,
+              topic TEXT NOT NULL DEFAULT 'all',
+              published_at DATE,
+              created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
             """
         )
         cur.execute("SELECT COUNT(*) FROM posts;")
@@ -247,6 +257,90 @@ def add_comment(post_id):
             "created_at": r["created_at"].isoformat(),
         }
     ), 201
+
+
+# ---------- Curated News ----------
+ALLOWED_TOPICS = {"all", "export controls", "tariffs", "sanctions", "fta", "customs"}
+
+
+@app.get("/api/news")
+def list_news():
+    topic = (request.args.get("topic") or "").strip().lower()
+    sql = "SELECT id, title, summary, url, source, topic, published_at, created_at FROM news_items"
+    args = []
+    if topic and topic != "all" and topic in ALLOWED_TOPICS:
+        sql += " WHERE topic = %s"
+        args.append(topic)
+    sql += " ORDER BY COALESCE(published_at, created_at::date) DESC, id DESC LIMIT 60;"
+    with db() as conn, conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(sql, args)
+        rows = cur.fetchall()
+    return jsonify(
+        [
+            {
+                "id": r["id"],
+                "title": r["title"],
+                "summary": r["summary"],
+                "url": r["url"],
+                "source": r["source"],
+                "topic": r["topic"],
+                "published_at": r["published_at"].isoformat() if r["published_at"] else None,
+                "created_at": r["created_at"].isoformat(),
+            }
+            for r in rows
+        ]
+    )
+
+
+@app.post("/api/news")
+@admin_required
+def create_news():
+    data = request.get_json(silent=True) or {}
+    title = (data.get("title") or "").strip()[:240]
+    summary = (data.get("summary") or "").strip()[:600]
+    url = (data.get("url") or "").strip()[:1000]
+    source = (data.get("source") or "").strip()[:120] or None
+    topic = (data.get("topic") or "all").strip().lower()
+    published_at = (data.get("published_at") or "").strip() or None
+    if topic not in ALLOWED_TOPICS:
+        topic = "all"
+    if not title or not summary or not url:
+        return jsonify({"error": "title, summary, url required"}), 400
+    if not (url.startswith("http://") or url.startswith("https://")):
+        return jsonify({"error": "url must start with http(s)://"}), 400
+    pub = None
+    if published_at:
+        try:
+            pub = datetime.strptime(published_at, "%Y-%m-%d").date()
+        except ValueError:
+            return jsonify({"error": "published_at must be YYYY-MM-DD"}), 400
+    with db() as conn, conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(
+            "INSERT INTO news_items (title, summary, url, source, topic, published_at) "
+            "VALUES (%s,%s,%s,%s,%s,%s) RETURNING id, title, summary, url, source, topic, published_at, created_at;",
+            (title, summary, url, source, topic, pub),
+        )
+        r = cur.fetchone()
+    return jsonify(
+        {
+            "id": r["id"],
+            "title": r["title"],
+            "summary": r["summary"],
+            "url": r["url"],
+            "source": r["source"],
+            "topic": r["topic"],
+            "published_at": r["published_at"].isoformat() if r["published_at"] else None,
+            "created_at": r["created_at"].isoformat(),
+        }
+    ), 201
+
+
+@app.delete("/api/news/<int:news_id>")
+@admin_required
+def delete_news(news_id):
+    with db() as conn, conn.cursor() as cur:
+        cur.execute("DELETE FROM news_items WHERE id=%s;", (news_id,))
+    return jsonify({"ok": True})
 
 
 init_db()
