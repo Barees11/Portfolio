@@ -331,6 +331,55 @@ footer{background:#060E1C;padding:1.5rem 5vw;display:flex;justify-content:space-
 @media(max-width:1024px){#hero{grid-template-columns:1fr}.hero-right{display:none}}
 @media(max-width:768px){.about-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem}.sk-grid{grid-template-columns:1fr 1fr}.proj-grid,.cert-grid{grid-template-columns:1fr}.news-grid{grid-template-columns:1fr 1fr}h1{white-space:normal}}
 @media(max-width:540px){.nav-links,.hire-wrap{display:none}.sk-grid,.news-grid{grid-template-columns:1fr}}
+/* ADMIN BAR + POSTS interactions */
+.admin-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem 1rem;background:var(--off-white);border:1px solid var(--rule-lt);border-radius:8px;margin-bottom:1.2rem;flex-wrap:wrap}
+.admin-status{font-size:.78rem;color:var(--ink-mid)}
+.admin-bar-actions{display:flex;gap:.5rem}
+.admin-link{background:transparent;border:1px solid var(--rule);color:var(--ink-mid);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:.45rem .9rem;cursor:pointer;border-radius:4px;transition:all .2s;font-family:var(--sans)}
+.admin-link:hover{background:var(--blue-mid);border-color:var(--blue-mid);color:#fff}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(10,22,40,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:500;padding:1rem}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:10px;padding:1.6rem 1.6rem 1.3rem;max-width:380px;width:100%;box-shadow:0 24px 64px rgba(10,22,40,.25)}
+.modal-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;color:var(--ink);margin-bottom:.3rem}
+.modal-sub{font-size:.8rem;color:var(--ink-mid);margin-bottom:1.1rem}
+.modal-input{width:100%;padding:.7rem .9rem;font-size:.9rem;border:1px solid var(--rule);border-radius:6px;font-family:var(--sans);outline:none;transition:border-color .2s}
+.modal-input:focus{border-color:var(--blue-mid)}
+.modal-err{color:#dc2626;font-size:.78rem;margin-top:.5rem;min-height:1rem}
+.modal-actions{display:flex;justify-content:flex-end;gap:.5rem;margin-top:1rem}
+.btn-ghost,.btn-primary{padding:.55rem 1.1rem;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:5px;cursor:pointer;font-family:var(--sans);transition:all .2s}
+.btn-ghost{background:transparent;color:var(--ink-mid);border:1px solid var(--rule)}
+.btn-ghost:hover{background:var(--off-white)}
+.btn-primary{background:var(--blue-mid);color:#fff}
+.btn-primary:hover{background:var(--blue-lt)}
+
+/* POST INTERACTIONS */
+.post-actions{display:flex;align-items:center;gap:.5rem;border-top:1px solid var(--rule-lt);padding-top:.8rem;margin-top:.9rem;flex-wrap:wrap}
+.post-act-btn{display:inline-flex;align-items:center;gap:.4rem;background:transparent;border:1px solid var(--rule);padding:.4rem .85rem;font-size:.78rem;font-weight:500;color:var(--ink-mid);border-radius:20px;cursor:pointer;transition:all .2s;font-family:var(--sans)}
+.post-act-btn:hover{border-color:var(--blue-mid);color:var(--blue-mid)}
+.post-act-btn.liked{background:var(--blue-pale);border-color:var(--blue-mid);color:var(--blue-mid)}
+.post-act-btn .ico{font-size:.85rem}
+.post-delete-btn{margin-left:auto;background:transparent;border:1px solid #fecaca;color:#dc2626;font-size:.7rem;font-weight:600;padding:.35rem .7rem;border-radius:4px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;font-family:var(--sans)}
+.post-delete-btn:hover{background:#fef2f2}
+
+.comments-wrap{margin-top:.9rem;border-top:1px dashed var(--rule-lt);padding-top:.9rem;display:none}
+.comments-wrap.open{display:block}
+.comment-list{display:flex;flex-direction:column;gap:.7rem;margin-bottom:.9rem}
+.comment{background:var(--off-white);border:1px solid var(--rule-lt);border-radius:6px;padding:.6rem .8rem}
+.comment-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-bottom:.25rem}
+.comment-name{font-size:.82rem;font-weight:600;color:var(--ink)}
+.comment-time{font-size:.7rem;color:var(--ink-lt)}
+.comment-body{font-size:.85rem;color:var(--ink-mid);line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.comment-empty{font-size:.78rem;color:var(--ink-lt);font-style:italic;padding:.4rem 0}
+.comment-form{display:grid;grid-template-columns:1fr 2fr auto;gap:.5rem}
+.comment-form input,.comment-form textarea{padding:.55rem .7rem;font-size:.82rem;border:1px solid var(--rule);border-radius:5px;font-family:var(--sans);outline:none;resize:vertical;transition:border-color .2s}
+.comment-form input:focus,.comment-form textarea:focus{border-color:var(--blue-mid)}
+.comment-form textarea{min-height:38px;max-height:180px}
+.comment-form button{background:var(--blue-mid);color:#fff;border:none;padding:.55rem 1rem;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;border-radius:5px;cursor:pointer;font-family:var(--sans);transition:background .2s}
+.comment-form button:hover{background:var(--blue-lt)}
+@media (max-width:640px){.comment-form{grid-template-columns:1fr}}
+.feed-empty{text-align:center;padding:2.5rem 1rem;color:var(--ink-lt);font-size:.9rem;border:1px dashed var(--rule);border-radius:8px}
 </style>
 </head>
 <body>
@@ -349,7 +398,7 @@ footer{background:#060E1C;padding:1.5rem 5vw;display:flex;justify-content:space-
   <div class="hire-wrap">
     <button class="hire-btn">Hire Me <span class="arr">▾</span></button>
     <div class="hire-drop">
-      <a href="SUNIL_KUMAR_CV.pdf" download="Sunil_Kumar_Resume.pdf"><span>⬇</span> Download Resume</a>
+      <a href="/static/SUNIL_KUMAR_CV.pdf" download="Sunil_Kumar_Resume.pdf"><span>⬇</span> Download Resume</a>
       <a href="mailto:sunilkumarb2597@gmail.com"><span>✉️</span> Send Email</a>
       <a href="https://www.linkedin.com/in/thesunilkumarb" target="_blank"><span>💼</span> LinkedIn Profile</a>
     </div>
@@ -386,14 +435,8 @@ I help companies turn trade compliance from a cost centre into a strategic advan
   <div class="hero-right">
     <div class="photo-ring">
       <div class="photo-inner">
-        <div class="photo-placeholder" id="photoPlaceholder">
-          <span style="font-size:3.2rem">👤</span>
-          <span>Your Photo</span>
-        </div>
-        <img id="heroPhoto" src="" alt="Sunil Kumar" style="display:none"/>
+        <img id="heroPhoto" src="/static/profile.jpg" alt="Sunil Kumar"/>
       </div>
-      <button class="add-photo-btn" onclick="document.getElementById('photoUpload').click()" title="Upload photo">📷</button>
-      <input type="file" id="photoUpload" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)"/>
     </div>
     <div class="float-stats">
       <div class="f-stat"><div class="f-stat-val">7<sup>+</sup></div><div class="f-stat-lbl">Years Experience</div></div>
@@ -563,7 +606,7 @@ I help companies turn trade compliance from a cost centre into a strategic advan
         <span class="proj-arrow">↓</span>
       </div>
       <div class="proj-detail"><div class="proj-detail-inner">
-        <div class="proj-desc">Built a proactive regulatory intelligence workflow tracking Section 232, AD/CVD, incentives, and policy updates across 40+ countries. Automated with Gen-AI for weekly insights and monthly executive reports.</div>
+        <div class="proj-desc">Monitor news for 40+ countries for reciprocal tariff updates, Section 232 updates in steel and aluminum goods, and reporting weekly and monthly on ongoing solar industry news, trends and policy changes. Automated with Gen-AI for weekly insights and monthly executive reports.</div>
         <div class="proj-impact"><strong>Impact:</strong> 30% cost reduction through Gen-AI workflow automation</div>
         <div class="proj-tags"><span class="proj-tag">Gen-AI</span><span class="proj-tag">Section 232</span><span class="proj-tag">AD/CVD</span><span class="proj-tag">40+ Countries</span></div>
       </div></div>
@@ -641,14 +684,22 @@ I help companies turn trade compliance from a cost centre into a strategic advan
     <div class="s-rule"></div>
   </div>
 
-  <!-- Composer -->
-  <div class="personal-composer fade-in">
+  <!-- Admin bar -->
+  <div class="admin-bar fade-in">
+    <div id="adminStatus" class="admin-status">Visitor view · Posts are read-only. You can like and comment below.</div>
+    <div class="admin-bar-actions">
+      <button class="admin-link" id="adminLoginBtn" onclick="openAdminLogin()">Owner login</button>
+      <button class="admin-link" id="adminLogoutBtn" onclick="adminLogout()" style="display:none">Log out</button>
+    </div>
+  </div>
+
+  <!-- Composer (admin only) -->
+  <div class="personal-composer fade-in" id="composer" style="display:none">
     <div class="composer-top">
       <div class="composer-avatar">SK</div>
       <div class="composer-input">
         <input type="text" class="composer-title" id="postTitle" placeholder="Title (optional)"/>
         <textarea class="composer-body" id="postBody" placeholder="Share a note, thought, update, or blog post…"></textarea>
-        <div id="attachedPreview" class="attached-preview"></div>
       </div>
     </div>
     <div class="composer-footer">
@@ -656,33 +707,30 @@ I help companies turn trade compliance from a cost centre into a strategic advan
         <button class="type-btn active" data-type="note" onclick="selectType(this)">📝 Note</button>
         <button class="type-btn" data-type="blog" onclick="selectType(this)">✍️ Blog</button>
         <button class="type-btn" data-type="update" onclick="selectType(this)">📢 Update</button>
-        <button class="type-btn" data-type="photo" onclick="selectType(this)">📸 Photo</button>
       </div>
       <div class="composer-actions">
-        <button class="img-attach-btn" onclick="document.getElementById('imgAttach').click()">🖼 Attach Image</button>
-        <input type="file" id="imgAttach" accept="image/*" multiple style="display:none" onchange="handleAttach(event)"/>
         <button class="post-btn" onclick="publishPost()">Publish</button>
       </div>
     </div>
   </div>
 
   <!-- Feed -->
-  <div class="personal-feed" id="personalFeed">
-    <!-- seed post -->
-    <div class="feed-post">
-      <div class="post-header">
-        <div class="post-header-left">
-          <div class="post-av">SK</div>
-          <div><div class="post-meta-name">Sunil Kumar</div><div class="post-meta-sub">March 2025</div></div>
-        </div>
-        <span class="post-type-badge badge-update">Update</span>
-      </div>
-      <div class="post-title">Lean Six Sigma Green Belt — Earned!</div>
-      <div class="post-body">Excited to have earned my Lean Six Sigma Green Belt while managing a full-time demanding role at EY. Looking forward to applying structured process-improvement thinking more formally to trade compliance workflows — there's a huge opportunity to make operations leaner and smarter.</div>
-      <div class="post-footer"><span class="post-date">March 2025</span></div>
+  <div class="personal-feed" id="personalFeed"></div>
+</section>
+
+<!-- Admin login modal -->
+<div class="modal-backdrop" id="adminModal" onclick="if(event.target===this)closeAdminLogin()">
+  <div class="modal">
+    <div class="modal-title">Owner login</div>
+    <div class="modal-sub">Enter the admin password to manage posts.</div>
+    <input type="password" id="adminPwd" class="modal-input" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()"/>
+    <div class="modal-err" id="adminErr"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeAdminLogin()">Cancel</button>
+      <button class="btn-primary" onclick="adminLogin()">Sign in</button>
     </div>
   </div>
-</section>
+</div>
 
 <!-- CONTACT -->
 <section id="contact">
@@ -755,15 +803,17 @@ function toggleCard(c){c.classList.toggle('open')}
 function toggleTl(item){item.classList.toggle('open')}
 function toggleProj(card){card.classList.toggle('open')}
 
-/* HERO PHOTO */
-function handlePhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{document.getElementById('heroPhoto').src=ev.target.result;document.getElementById('heroPhoto').style.display='block';document.getElementById('photoPlaceholder').style.display='none'};r.readAsDataURL(f)}
-
 /* CONTACT */
 function handleSubmit(e){e.preventDefault();const b=e.target.querySelector('.btn-send');b.textContent='Message Sent ✓';b.style.background='#16a34a';setTimeout(()=>{b.textContent='Send Message →';b.style.background='';e.target.reset()},3500)}
 
-/* ── PERSONAL SPACE ── */
+/* ── PERSONAL SPACE (API-driven) ── */
 let selectedType='note';
-let attachedFiles=[];
+let isAdmin=false;
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const BADGE={note:'badge-note',blog:'badge-blog',update:'badge-update'};
+const LABEL={note:'Note',blog:'Blog',update:'Update'};
+function escHtml(s){return (s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function fmtDate(iso){const d=new Date(iso);return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`}
 
 function selectType(btn){
   document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
@@ -771,80 +821,159 @@ function selectType(btn){
   selectedType=btn.dataset.type;
 }
 
-function handleAttach(e){
-  const files=Array.from(e.target.files);
-  attachedFiles=[...attachedFiles,...files];
-  renderAttachPreviews();
+async function refreshAdminState(){
+  try{
+    const r=await fetch('/api/admin/me',{credentials:'same-origin'});
+    const j=await r.json();
+    isAdmin=!!j.is_admin;
+  }catch(e){isAdmin=false}
+  applyAdminUI();
+}
+function applyAdminUI(){
+  document.getElementById('composer').style.display=isAdmin?'block':'none';
+  document.getElementById('adminLoginBtn').style.display=isAdmin?'none':'inline-block';
+  document.getElementById('adminLogoutBtn').style.display=isAdmin?'inline-block':'none';
+  document.getElementById('adminStatus').textContent=isAdmin
+    ?'Owner mode · You can publish, delete, and manage posts.'
+    :'Visitor view · Posts are read-only. You can like and comment below.';
+  document.querySelectorAll('.post-delete-btn').forEach(b=>b.style.display=isAdmin?'inline-block':'none');
 }
 
-function renderAttachPreviews(){
-  const container=document.getElementById('attachedPreview');
-  container.innerHTML='';
-  attachedFiles.forEach((file,i)=>{
-    const wrap=document.createElement('div');wrap.style.position='relative';wrap.style.display='inline-block';
-    const img=document.createElement('img');img.className='att-img-thumb';
-    const reader=new FileReader();reader.onload=ev=>img.src=ev.target.result;reader.readAsDataURL(file);
-    const rem=document.createElement('button');rem.className='att-remove';rem.textContent='✕';
-    rem.onclick=()=>{attachedFiles.splice(i,1);renderAttachPreviews()};
-    wrap.appendChild(img);wrap.appendChild(rem);container.appendChild(wrap);
-  });
+function openAdminLogin(){document.getElementById('adminErr').textContent='';document.getElementById('adminPwd').value='';document.getElementById('adminModal').classList.add('open');setTimeout(()=>document.getElementById('adminPwd').focus(),60)}
+function closeAdminLogin(){document.getElementById('adminModal').classList.remove('open')}
+async function adminLogin(){
+  const pw=document.getElementById('adminPwd').value;
+  const err=document.getElementById('adminErr');err.textContent='';
+  try{
+    const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({password:pw})});
+    if(!r.ok){const j=await r.json().catch(()=>({}));err.textContent=j.error||'Sign-in failed.';return}
+    closeAdminLogin();
+    await refreshAdminState();
+  }catch(e){err.textContent='Network error. Try again.'}
+}
+async function adminLogout(){
+  await fetch('/api/admin/logout',{method:'POST',credentials:'same-origin'});
+  await refreshAdminState();
 }
 
-function publishPost(){
-  const title=document.getElementById('postTitle').value.trim();
-  const body=document.getElementById('postBody').value.trim();
-  if(!body&&attachedFiles.length===0)return;
+async function loadPosts(){
+  const feed=document.getElementById('personalFeed');
+  feed.innerHTML='<div class="feed-empty">Loading…</div>';
+  try{
+    const r=await fetch('/api/posts',{credentials:'same-origin'});
+    const posts=await r.json();
+    if(!Array.isArray(posts)||posts.length===0){feed.innerHTML='<div class="feed-empty">No posts yet.</div>';return}
+    feed.innerHTML='';
+    posts.forEach(p=>feed.appendChild(renderPost(p)));
+    applyAdminUI();
+    attachCursor();
+  }catch(e){feed.innerHTML='<div class="feed-empty">Couldn\'t load posts.</div>'}
+}
 
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const d=new Date();
-  const dateStr=`${months[d.getMonth()]} ${d.getFullYear()}`;
-
-  const badgeMap={note:'badge-note',blog:'badge-blog',update:'badge-update',photo:'badge-photo'};
-  const labelMap={note:'Note',blog:'Blog',update:'Update',photo:'Photo'};
-
-  const post=document.createElement('div');post.className='feed-post';
-
-  // Build image grid if photos attached
-  let imgHTML='';
-  if(attachedFiles.length>0){
-    const cols=Math.min(attachedFiles.length,3);
-    imgHTML=`<div class="post-images cols-${cols}" id="imgGrid_${Date.now()}"></div>`;
-  }
-
-  post.innerHTML=`
+function renderPost(p){
+  const wrap=document.createElement('div');wrap.className='feed-post';wrap.dataset.postId=p.id;
+  wrap.innerHTML=`
     <div class="post-header">
       <div class="post-header-left">
         <div class="post-av">SK</div>
-        <div><div class="post-meta-name">Sunil Kumar</div><div class="post-meta-sub">${dateStr}</div></div>
+        <div><div class="post-meta-name">Sunil Kumar</div><div class="post-meta-sub">${fmtDate(p.created_at)}</div></div>
       </div>
-      <span class="post-type-badge ${badgeMap[selectedType]}">${labelMap[selectedType]}</span>
+      <span class="post-type-badge ${BADGE[p.type]||'badge-note'}">${LABEL[p.type]||'Note'}</span>
     </div>
-    ${title?`<div class="post-title">${title}</div>`:''}
-    ${body?`<div class="post-body">${body}</div>`:''}
-    ${imgHTML}
-    <div class="post-footer"><span class="post-date">${dateStr}</span><button class="post-delete" onclick="this.closest('.feed-post').remove()">Delete</button></div>
-  `;
+    ${p.title?`<div class="post-title">${escHtml(p.title)}</div>`:''}
+    <div class="post-body">${escHtml(p.body)}</div>
+    <div class="post-actions">
+      <button class="post-act-btn ${p.liked?'liked':''}" data-act="like">
+        <span class="ico">♥</span><span class="like-label">${p.liked?'Liked':'Like'}</span> · <span class="like-count">${p.likes}</span>
+      </button>
+      <button class="post-act-btn" data-act="toggle-comments">
+        <span class="ico">💬</span>Comments · <span class="cmt-count">${p.comment_count}</span>
+      </button>
+      <button class="post-delete-btn" data-act="delete" style="display:none">Delete</button>
+    </div>
+    <div class="comments-wrap">
+      <div class="comment-list"></div>
+      <form class="comment-form" onsubmit="return false">
+        <input type="text" class="cmt-name" placeholder="Your name" maxlength="80"/>
+        <textarea class="cmt-body" placeholder="Write a comment…" maxlength="2000"></textarea>
+        <button type="submit">Post</button>
+      </form>
+    </div>`;
+  wrap.querySelector('[data-act=like]').addEventListener('click',()=>likePost(p.id,wrap));
+  wrap.querySelector('[data-act=toggle-comments]').addEventListener('click',()=>toggleComments(p.id,wrap));
+  wrap.querySelector('[data-act=delete]').addEventListener('click',()=>deletePost(p.id,wrap));
+  wrap.querySelector('.comment-form').addEventListener('submit',e=>{e.preventDefault();submitComment(p.id,wrap)});
+  return wrap;
+}
 
-  const feed=document.getElementById('personalFeed');
-  feed.insertBefore(post,feed.firstChild);
+async function likePost(id,wrap){
+  try{
+    const r=await fetch(`/api/posts/${id}/like`,{method:'POST',credentials:'same-origin'});
+    const j=await r.json();
+    const btn=wrap.querySelector('[data-act=like]');
+    btn.classList.toggle('liked',!!j.liked);
+    btn.querySelector('.like-label').textContent=j.liked?'Liked':'Like';
+    btn.querySelector('.like-count').textContent=j.likes;
+  }catch(e){}
+}
 
-  // Load actual images into grid
-  if(attachedFiles.length>0){
-    const grid=post.querySelector('.post-images');
-    attachedFiles.forEach(file=>{
-      const img=document.createElement('img');
-      const r=new FileReader();r.onload=ev=>img.src=ev.target.result;r.readAsDataURL(file);
-      grid.appendChild(img);
+async function toggleComments(id,wrap){
+  const cw=wrap.querySelector('.comments-wrap');
+  const willOpen=!cw.classList.contains('open');
+  cw.classList.toggle('open',willOpen);
+  if(willOpen)await loadComments(id,wrap);
+}
+
+async function loadComments(id,wrap){
+  const list=wrap.querySelector('.comment-list');
+  list.innerHTML='<div class="comment-empty">Loading…</div>';
+  try{
+    const r=await fetch(`/api/posts/${id}/comments`,{credentials:'same-origin'});
+    const items=await r.json();
+    if(!items.length){list.innerHTML='<div class="comment-empty">Be the first to comment.</div>';return}
+    list.innerHTML='';
+    items.forEach(c=>{
+      const el=document.createElement('div');el.className='comment';
+      el.innerHTML=`<div class="comment-head"><div class="comment-name">${escHtml(c.name)}</div><div class="comment-time">${fmtDate(c.created_at)}</div></div><div class="comment-body">${escHtml(c.body)}</div>`;
+      list.appendChild(el);
     });
-  }
+  }catch(e){list.innerHTML='<div class="comment-empty">Couldn\'t load comments.</div>'}
+}
 
-  // Reset
+async function submitComment(id,wrap){
+  const nameEl=wrap.querySelector('.cmt-name');
+  const bodyEl=wrap.querySelector('.cmt-body');
+  const name=nameEl.value.trim();const body=bodyEl.value.trim();
+  if(!name||!body)return;
+  try{
+    const r=await fetch(`/api/posts/${id}/comments`,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({name,body})});
+    if(!r.ok)return;
+    nameEl.value='';bodyEl.value='';
+    await loadComments(id,wrap);
+    const cnt=wrap.querySelector('.cmt-count');cnt.textContent=parseInt(cnt.textContent||'0',10)+1;
+  }catch(e){}
+}
+
+async function deletePost(id,wrap){
+  if(!isAdmin)return;
+  if(!confirm('Delete this post permanently?'))return;
+  const r=await fetch(`/api/posts/${id}`,{method:'DELETE',credentials:'same-origin'});
+  if(r.ok)wrap.remove();
+}
+
+async function publishPost(){
+  const title=document.getElementById('postTitle').value.trim();
+  const body=document.getElementById('postBody').value.trim();
+  if(!body)return;
+  const r=await fetch('/api/posts',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({type:selectedType,title,body})});
+  if(r.status===401){alert('Please sign in as owner.');return}
+  if(!r.ok)return;
   document.getElementById('postTitle').value='';
   document.getElementById('postBody').value='';
-  document.getElementById('attachedPreview').innerHTML='';
-  attachedFiles=[];
-  attachCursor();
+  await loadPosts();
 }
+
+refreshAdminState().then(loadPosts);
 
 /* ── BLOG ── */
 let currentFilter='all';
