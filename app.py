@@ -77,10 +77,15 @@ def client_ip():
 # ---------- Pages ----------
 @app.route("/")
 def index():
-    resp = send_from_directory(".", "index.html")
+    return send_from_directory(".", "index.html")
+
+
+@app.after_request
+def _no_cache_in_dev(resp):
     if os.environ.get("REPLIT_DEPLOYMENT") != "1":
         resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         resp.headers["Pragma"] = "no-cache"
+        resp.headers["Expires"] = "0"
     return resp
 
 
