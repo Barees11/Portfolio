@@ -30,8 +30,10 @@ def init_db():
               type TEXT NOT NULL DEFAULT 'note',
               title TEXT,
               body TEXT NOT NULL,
+              image_url TEXT,
               created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
+            ALTER TABLE posts ADD COLUMN IF NOT EXISTS image_url TEXT;
             CREATE TABLE IF NOT EXISTS post_likes (
               post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
               ip TEXT NOT NULL,
@@ -103,8 +105,9 @@ def _no_cache_in_dev(resp):
 @app.post("/api/admin/login")
 def admin_login():
     data = request.get_json(silent=True) or {}
-    pw = data.get("password", "")
-    if not ADMIN_PASSWORD or pw != ADMIN_PASSWORD:
+    pw = (data.get("password") or "").strip()
+    expected = (ADMIN_PASSWORD or "").strip()
+    if not expected or pw != expected:
         return jsonify({"ok": False, "error": "Invalid password"}), 401
     session["is_admin"] = True
     session.permanent = True
@@ -138,6 +141,7 @@ def serialize_post(row, ip):
         "type": row["type"],
         "title": row["title"],
         "body": row["body"],
+        "image_url": row.get("image_url"),
         "created_at": row["created_at"].isoformat(),
         "likes": likes,
         "liked": liked,
@@ -154,21 +158,47 @@ def list_posts():
     return jsonify([serialize_post(r, ip) for r in rows])
 
 
+ALLOWED_IMG_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
+UPLOAD_DIR = os.path.join("static", "uploads")
+
+
+def _save_uploaded_image(file_storage):
+    if not file_storage or not file_storage.filename:
+        return None
+    ext = os.path.splitext(file_storage.filename)[1].lower()
+    if ext not in ALLOWED_IMG_EXT:
+        return None
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    name = f"{secrets.token_hex(8)}{ext}"
+    path = os.path.join(UPLOAD_DIR, name)
+    file_storage.save(path)
+    return f"/static/uploads/{name}"
+
+
 @app.post("/api/posts")
 @admin_required
 def create_post():
-    data = request.get_json(silent=True) or {}
-    ptype = (data.get("type") or "note").strip().lower()
+    if request.content_type and request.content_type.startswith("multipart/"):
+        ptype = (request.form.get("type") or "note").strip().lower()
+        title = (request.form.get("title") or "").strip() or None
+        body = (request.form.get("body") or "").strip()
+        image_url = _save_uploaded_image(request.files.get("image"))
+    else:
+        data = request.get_json(silent=True) or {}
+        ptype = (data.get("type") or "note").strip().lower()
+        title = (data.get("title") or "").strip() or None
+        body = (data.get("body") or "").strip()
+        image_url = None
     if ptype not in ("note", "blog", "update"):
         ptype = "note"
-    title = (data.get("title") or "").strip() or None
-    body = (data.get("body") or "").strip()
+    if not body and not image_url:
+        return jsonify({"error": "body or image required"}), 400
     if not body:
-        return jsonify({"error": "body required"}), 400
+        body = ""
     with db() as conn, conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(
-            "INSERT INTO posts (type, title, body) VALUES (%s,%s,%s) RETURNING *;",
-            (ptype, title, body),
+            "INSERT INTO posts (type, title, body, image_url) VALUES (%s,%s,%s,%s) RETURNING *;",
+            (ptype, title, body, image_url),
         )
         row = cur.fetchone()
     return jsonify(serialize_post(row, client_ip())), 201

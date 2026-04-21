@@ -672,14 +672,6 @@ I help companies turn trade compliance from a cost centre into a strategic advan
     <div class="s-rule" style="background:var(--sky)"></div>
   </div>
 
-  <!-- Source transparency banner -->
-  <div class="sources-banner fade-in d1">
-    <span class="sb-icon">📡</span>
-    <div class="sb-text">
-      <strong>Curated by Sunil:</strong> Short, Inshorts-style summaries of trade-compliance updates I'm tracking — each card links to the original source. Filter by topic below.
-    </div>
-  </div>
-
   <div class="blog-toolbar fade-in d2">
     <div class="blog-filters">
       <button class="f-btn active" data-filter="all">All Topics</button>
@@ -743,6 +735,10 @@ I help companies turn trade compliance from a cost centre into a strategic advan
       <div class="composer-input">
         <input type="text" class="composer-title" id="postTitle" placeholder="Title (optional)"/>
         <textarea class="composer-body" id="postBody" placeholder="Share a note, thought, update, or blog post…"></textarea>
+        <div id="imgPreviewWrap" style="display:none;margin-top:.6rem;position:relative">
+          <img id="imgPreview" style="max-width:100%;max-height:280px;border-radius:6px;border:1px solid var(--rule)"/>
+          <button type="button" onclick="clearPostImage()" style="position:absolute;top:.4rem;right:.4rem;background:rgba(0,0,0,.6);color:#fff;border:none;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:.85rem">×</button>
+        </div>
       </div>
     </div>
     <div class="composer-footer">
@@ -750,8 +746,13 @@ I help companies turn trade compliance from a cost centre into a strategic advan
         <button class="type-btn active" data-type="note" onclick="selectType(this)">📝 Note</button>
         <button class="type-btn" data-type="blog" onclick="selectType(this)">✍️ Blog</button>
         <button class="type-btn" data-type="update" onclick="selectType(this)">📢 Update</button>
+        <label class="type-btn" style="cursor:pointer;margin-left:.4rem" title="Attach image">
+          📷 Image
+          <input type="file" id="postImage" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="onPostImageChosen(event)"/>
+        </label>
       </div>
       <div class="composer-actions">
+        <span id="postErr" style="color:#dc2626;font-size:.78rem;margin-right:.6rem"></span>
         <button class="post-btn" onclick="publishPost()">Publish</button>
       </div>
     </div>
@@ -940,7 +941,8 @@ function renderPost(p){
       <span class="post-type-badge ${BADGE[p.type]||'badge-note'}">${LABEL[p.type]||'Note'}</span>
     </div>
     ${p.title?`<div class="post-title">${escHtml(p.title)}</div>`:''}
-    <div class="post-body">${escHtml(p.body)}</div>
+    ${p.body?`<div class="post-body">${escHtml(p.body)}</div>`:''}
+    ${p.image_url?`<div class="post-image" style="margin:.6rem 0"><img src="${escHtml(p.image_url)}" alt="" style="max-width:100%;border-radius:6px;border:1px solid var(--rule)"/></div>`:''}
     <div class="post-actions">
       <button class="post-act-btn ${p.liked?'liked':''}" data-act="like">
         <span class="ico">♥</span><span class="like-label">${p.liked?'Liked':'Like'}</span> · <span class="like-count">${p.likes}</span>
@@ -1020,15 +1022,38 @@ async function deletePost(id,wrap){
   if(r.ok)wrap.remove();
 }
 
+function onPostImageChosen(e){
+  const f=e.target.files&&e.target.files[0];
+  if(!f)return clearPostImage();
+  if(f.size>8*1024*1024){document.getElementById('postErr').textContent='Image too large (max 8 MB).';e.target.value='';return}
+  document.getElementById('postErr').textContent='';
+  const r=new FileReader();
+  r.onload=ev=>{document.getElementById('imgPreview').src=ev.target.result;document.getElementById('imgPreviewWrap').style.display='block'};
+  r.readAsDataURL(f);
+}
+function clearPostImage(){
+  document.getElementById('postImage').value='';
+  document.getElementById('imgPreview').src='';
+  document.getElementById('imgPreviewWrap').style.display='none';
+}
 async function publishPost(){
   const title=document.getElementById('postTitle').value.trim();
   const body=document.getElementById('postBody').value.trim();
-  if(!body)return;
-  const r=await fetch('/api/posts',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({type:selectedType,title,body})});
-  if(r.status===401){alert('Please sign in as owner.');return}
-  if(!r.ok)return;
+  const fileInput=document.getElementById('postImage');
+  const file=fileInput.files&&fileInput.files[0];
+  const err=document.getElementById('postErr');err.textContent='';
+  if(!body && !file){err.textContent='Write something or attach an image.';return}
+  const fd=new FormData();
+  fd.append('type',selectedType);
+  fd.append('title',title);
+  fd.append('body',body);
+  if(file)fd.append('image',file);
+  const r=await fetch('/api/posts',{method:'POST',credentials:'same-origin',body:fd});
+  if(r.status===401){err.textContent='Please sign in as owner.';return}
+  if(!r.ok){const j=await r.json().catch(()=>({}));err.textContent=j.error||'Could not publish.';return}
   document.getElementById('postTitle').value='';
   document.getElementById('postBody').value='';
+  clearPostImage();
   await loadPosts();
 }
 
